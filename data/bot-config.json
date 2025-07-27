@@ -1,0 +1,8 @@
+{
+  "whoamiDescription": "A customizable Discord bot for your community.",
+  "footerText": "Discord Bot Generator",
+  "botName": "Discord Bot",
+  "botColor": "#00aeef",
+  "welcomeMessage": "Welcome to our community!",
+  "verificationMessage": "You have been successfully verified!"
+}
