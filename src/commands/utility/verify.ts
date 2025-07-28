@@ -14,11 +14,11 @@ const MEMBER_RESOURCES_CHANNEL = "<#1344439191110422588>";
  */
 export const data: CommandData = {
     name: "verify",
-    description: "Verify your DUCA membership and redeem the @Member role",
+    description: "Verify your membership and redeem the @Member role",
     options: [
         {
             name: "email",
-            description: "The email address associated with your DUCA membership",
+            description: "The email address associated with your membership",
             type: ApplicationCommandOptionType.String,
             required: true,
         },

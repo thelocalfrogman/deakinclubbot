@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Bot Config Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .tab.active {
+            background: white;
+            color: #007bff;
+            border-bottom: 3px solid #007bff;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h3 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .help-text {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .optional {
+            color: #6c757d;
+            font-weight: normal;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+            transform: translateY(-1px);
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .download-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .download-section h4 {
+            margin-bottom: 15px;
+            color: #495057;
+        }
+
+        .file-preview {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tab-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Discord Bot Config Generator</h1>
+            <p>Generate configuration files for your Discord bot without any setup</p>
+        </div>
+
+        <div class="content">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('bot')">Bot Customisation</button>
+                <button class="tab" onclick="showTab('env')">Environment Variables</button>
+                <button class="tab" onclick="showTab('download')">Download Files</button>
+            </div>
+
+            <div id="alert" class="alert"></div>
+
+            <!-- Bot Customisation Tab -->
+            <div id="bot-tab" class="tab-content active">
+                <div class="section">
+                    <h3>General Bot Settings</h3>
+                    <div class="form-group">
+                        <label for="botName">Bot Name</label>
+                        <input type="text" id="botName" placeholder="Enter your bot's name" value="Discord Bot">
+                    </div>
+                    <div class="form-group">
+                        <label for="botColor">Bot Color (Hex)</label>
+                        <input type="color" id="botColor" value="#00aeef">
+                        <div class="help-text">This color will be used for embeds and UI elements</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Whoami Command Customisation</h3>
+                    <div class="form-group">
+                        <label for="whoamiDescription">Bot Description</label>
+                        <textarea id="whoamiDescription" placeholder="Enter a description for your bot that will appear in the /whoami command">A customisable Discord bot for your community.</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="footerText">Footer Text</label>
+                        <input type="text" id="footerText" placeholder="Text to display in the footer of bot messages" value="Discord Bot Generator">
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Command Descriptions</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="whoamiCommandDesc">Whoami Command Description</label>
+                            <input type="text" id="whoamiCommandDesc" placeholder="Description for the /whoami command" value="Display bot information">
+                        </div>
+                        <div class="form-group">
+                            <label for="pingCommandDesc">Ping Command Description</label>
+                            <input type="text" id="pingCommandDesc" placeholder="Description for the /ping command" value="Display latency and response time">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="commandsCommandDesc">Commands Command Description</label>
+                            <input type="text" id="commandsCommandDesc" placeholder="Description for the /commands command" value="Display a list of all available commands">
+                        </div>
+                        <div class="form-group">
+                            <label for="eightballCommandDesc">8ball Command Description</label>
+                            <input type="text" id="eightballCommandDesc" placeholder="Description for the /8ball command" value="Ask the magic 8-ball a question">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="catCommandDesc">Cat Command Description</label>
+                            <input type="text" id="catCommandDesc" placeholder="Description for the /cat command" value="Display a random cat HTTP status code">
+                        </div>
+                        <div class="form-group">
+                            <label for="flipCommandDesc">Flip Command Description</label>
+                            <input type="text" id="flipCommandDesc" placeholder="Description for the /flip command" value="Flip a virtual coin!">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="verifyCommandDesc">Verify Command Description</label>
+                            <input type="text" id="verifyCommandDesc" placeholder="Description for the /verify command" value="Verify your membership and redeem the @Member role">
+                        </div>
+                        <div class="form-group">
+                            <label for="calendarCommandDesc">Calendar Command Description</label>
+                            <input type="text" id="calendarCommandDesc" placeholder="Description for the /calendar command" value="Display a list of upcoming events">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Button Configuration</h3>
+                    <div class="help-text">These buttons will appear in the /whoami command to link to external sites</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="joinButtonText">Join Button Text</label>
+                            <input type="text" id="joinButtonText" placeholder="e.g., Join Our Community">
+                        </div>
+                        <div class="form-group">
+                            <label for="joinButtonUrl">Join Button URL</label>
+                            <input type="url" id="joinButtonUrl" placeholder="https://discord.gg/your-invite">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="socialsButtonText">Socials Button Text</label>
+                            <input type="text" id="socialsButtonText" placeholder="e.g., Follow Us">
+                        </div>
+                        <div class="form-group">
+                            <label for="socialsButtonUrl">Socials Button URL</label>
+                            <input type="url" id="socialsButtonUrl" placeholder="https://twitter.com/your-handle">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="githubButtonText">GitHub Button Text</label>
+                            <input type="text" id="githubButtonText" placeholder="e.g., View Source">
+                        </div>
+                        <div class="form-group">
+                            <label for="githubButtonUrl">GitHub Button URL</label>
+                            <input type="url" id="githubButtonUrl" placeholder="https://github.com/your-repo">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Messages</h3>
+                    <div class="form-group">
+                        <label for="welcomeMessage">Welcome Message</label>
+                        <textarea id="welcomeMessage" placeholder="Message to display when new members join">Welcome to our community!</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="verificationMessage">Verification Message</label>
+                        <textarea id="verificationMessage" placeholder="Message to display when members are verified">You have been successfully verified!</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Environment Variables Tab -->
+            <div id="env-tab" class="tab-content">
+                <div class="section">
+                    <h3>Required Environment Variables</h3>
+                    <div class="help-text">These variables are required for your bot to function properly</div>
+                    <div class="form-group">
+                        <label for="DISCORD_TOKEN">Discord Bot Token</label>
+                        <input type="password" id="DISCORD_TOKEN" placeholder="Your Discord bot token from Discord Developer Portal">
+                        <div class="help-text">Get this from the Discord Developer Portal</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="GUILD_ID">Guild ID (Server ID)</label>
+                        <input type="text" id="GUILD_ID" placeholder="Your Discord server ID">
+                        <div class="help-text">Right-click your server and select "Copy Server ID"</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="DEV_ROLE_ID">Developer Role ID</label>
+                        <input type="text" id="DEV_ROLE_ID" placeholder="Role ID for bot developers/admins">
+                        <div class="help-text">Right-click the role and select "Copy Role ID"</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="MEMBER_ROLE_ID">Member Role ID</label>
+                        <input type="text" id="MEMBER_ROLE_ID" placeholder="Role ID for verified members">
+                        <div class="help-text">Right-click the role and select "Copy Role ID"</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Optional Environment Variables</h3>
+                    <div class="help-text">These variables are optional and enable additional features</div>
+                    <div class="form-group">
+                        <label for="SUPABASE_URL">Supabase URL <span class="optional">(Optional)</span></label>
+                        <input type="url" id="SUPABASE_URL" placeholder="Your Supabase project URL">
+                        <div class="help-text">Required for member verification and calendar features</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="SUPABASE_ANON_KEY">Supabase Anonymous Key <span class="optional">(Optional)</span></label>
+                        <input type="password" id="SUPABASE_ANON_KEY" placeholder="Your Supabase anonymous API key">
+                        <div class="help-text">Found in your Supabase project settings</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="WEB_PORT">Web Port <span class="optional">(Optional)</span></label>
+                        <input type="number" id="WEB_PORT" placeholder="3000" value="3000">
+                        <div class="help-text">Port for the web configuration interface</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="WEB_SECRET">Web Secret Key <span class="optional">(Optional)</span></label>
+                        <input type="password" id="WEB_SECRET" placeholder="Change this to a secure random string">
+                        <div class="help-text">Secret key for web interface security</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Download Tab -->
+            <div id="download-tab" class="tab-content">
+                <div class="section">
+                    <h3>Generated Configuration Files</h3>
+                    <p>Review and download your configuration files below:</p>
+                    
+                    <div class="download-section">
+                        <h4>Bot Configuration (bot-config.json)</h4>
+                        <p>This file contains all your bot customisation settings.</p>
+                        <button class="btn btn-primary" onclick="downloadBotConfig()">Download bot-config.json</button>
+                        <button class="btn btn-secondary" onclick="togglePreview('bot')">Preview</button>
+                        <div id="bot-preview" class="file-preview" style="display: none;"></div>
+                    </div>
+
+                    <div class="download-section">
+                        <h4>Environment Variables (.env)</h4>
+                        <p>This file contains your environment variables for the bot.</p>
+                        <button class="btn btn-primary" onclick="downloadEnvFile()">Download .env</button>
+                        <button class="btn btn-secondary" onclick="togglePreview('env')">Preview</button>
+                        <div id="env-preview" class="file-preview" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to selected tab
+            event.target.classList.add('active');
+        }
+
+        function getBotConfig() {
+            return {
+                botName: document.getElementById('botName').value || 'Discord Bot',
+                botColor: document.getElementById('botColor').value || '#00aeef',
+                whoamiDescription: document.getElementById('whoamiDescription').value || 'A customisable Discord bot for your community.',
+                footerText: document.getElementById('footerText').value || 'Discord Bot Generator',
+                joinButtonText: document.getElementById('joinButtonText').value || '',
+                joinButtonUrl: document.getElementById('joinButtonUrl').value || '',
+                socialsButtonText: document.getElementById('socialsButtonText').value || '',
+                socialsButtonUrl: document.getElementById('socialsButtonUrl').value || '',
+                githubButtonText: document.getElementById('githubButtonText').value || '',
+                githubButtonUrl: document.getElementById('githubButtonUrl').value || '',
+                welcomeMessage: document.getElementById('welcomeMessage').value || 'Welcome to our community!',
+                verificationMessage: document.getElementById('verificationMessage').value || 'You have been successfully verified!',
+                commandDescriptions: {
+                    whoami: document.getElementById('whoamiCommandDesc').value || 'Display bot information',
+                    ping: document.getElementById('pingCommandDesc').value || 'Display latency and response time',
+                    commands: document.getElementById('commandsCommandDesc').value || 'Display a list of all available commands',
+                    eightball: document.getElementById('eightballCommandDesc').value || 'Ask the magic 8-ball a question',
+                    cat: document.getElementById('catCommandDesc').value || 'Display a random cat HTTP status code',
+                    flip: document.getElementById('flipCommandDesc').value || 'Flip a virtual coin!',
+                    verify: document.getElementById('verifyCommandDesc').value || 'Verify your membership and redeem the @Member role',
+                    calendar: document.getElementById('calendarCommandDesc').value || 'Display a list of upcoming events'
+                },
+                commandTitles: {
+                    commands: "$ commands",
+                    commandsDescription: "**Commands Manual**\nBelow is a complete list of all slash commands separated by category:",
+                    eightball: "$ 8-ball",
+                    cat: "$ cat",
+                    flip: "$ flip",
+                    verify: "$ verify",
+                    calendar: "$ calendar"
+                },
+                commandOutputs: {
+                    commands: {
+                        entertainmentTitle: "Fun",
+                        entertainmentCommands: "`8ball` `cat` `flip`",
+                        utilityTitle: "Utility",
+                        utilityCommands: "`calendar` `ping` `verify`",
+                        miscTitle: "Extra",
+                        miscCommands: "`commands` `whoami`"
+                    },
+                    ping: {
+                        title: "$ ping",
+                        format: "\\> latency :: **{latency}ms**"
+                    },
+                    eightball: {
+                        title: "$ 8-ball",
+                        errorMessage: "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists."
+                    },
+                    cat: {
+                        title: "$ cat",
+                        errorMessage: "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists."
+                    },
+                    flip: {
+                        title: "$ flip",
+                        format: "\\> output :: **{result}**",
+                        errorMessage: "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists."
+                    },
+                    verify: {
+                        title: "$ verify",
+                        errorMessage: "We're sorry — an unexpected error occurred.\n Please try again later or contact an administrator if the issue persists.",
+                        successMessage: "**You have been successfully verified!**",
+                        alreadyVerifiedMessage: "You are already verified — no further action needed!",
+                        memberAnnouncementsChannel: "<#1347067213160644659>",
+                        memberResourcesChannel: "<#1344439191110422588>"
+                    },
+                    calendar: {
+                        title: "$ calendar",
+                        noEventsMessage: "No upcoming events found matching those filters.\n Try adjusting your query or please try again later.",
+                        errorMessage: "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
+                        lastUpdatedText: "Last Updated"
+                    }
+                }
+            };
+        }
+
+        function getEnvConfig() {
+            return {
+                DISCORD_TOKEN: document.getElementById('DISCORD_TOKEN').value || '',
+                GUILD_ID: document.getElementById('GUILD_ID').value || '',
+                DEV_ROLE_ID: document.getElementById('DEV_ROLE_ID').value || '',
+                MEMBER_ROLE_ID: document.getElementById('MEMBER_ROLE_ID').value || '',
+                SUPABASE_URL: document.getElementById('SUPABASE_URL').value || '',
+                SUPABASE_ANON_KEY: document.getElementById('SUPABASE_ANON_KEY').value || '',
+                WEB_PORT: document.getElementById('WEB_PORT').value || '3000',
+                WEB_SECRET: document.getElementById('WEB_SECRET').value || ''
+            };
+        }
+
+        function downloadBotConfig() {
+            const config = getBotConfig();
+            const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'bot-config.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showAlert('bot-config.json downloaded successfully!', 'success');
+        }
+
+        function downloadEnvFile() {
+            const envConfig = getEnvConfig();
+            let envContent = '';
+            for (const [key, value] of Object.entries(envConfig)) {
+                if (value) {
+                    envContent += `${key}=${value}\n`;
+                }
+            }
+
+            const blob = new Blob([envContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '.env';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showAlert('.env file downloaded successfully!', 'success');
+        }
+
+        function togglePreview(type) {
+            const preview = document.getElementById(type + '-preview');
+            if (preview.style.display === 'none') {
+                if (type === 'bot') {
+                    preview.textContent = JSON.stringify(getBotConfig(), null, 2);
+                } else if (type === 'env') {
+                    const envConfig = getEnvConfig();
+                    let envContent = '';
+                    for (const [key, value] of Object.entries(envConfig)) {
+                        if (value) {
+                            envContent += `${key}=${value}\n`;
+                        }
+                    }
+                    preview.textContent = envContent;
+                }
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // Auto-save configuration to localStorage
+        function saveToLocalStorage() {
+            const config = {
+                bot: getBotConfig(),
+                env: getEnvConfig()
+            };
+            localStorage.setItem('discordBotConfig', JSON.stringify(config));
+        }
+
+        // Load configuration from localStorage
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('discordBotConfig');
+            if (saved) {
+                try {
+                    const config = JSON.parse(saved);
+                    
+                    // Load bot config
+                    if (config.bot) {
+                        document.getElementById('botName').value = config.bot.botName || '';
+                        document.getElementById('botColor').value = config.bot.botColor || '#00aeef';
+                        document.getElementById('whoamiDescription').value = config.bot.whoamiDescription || '';
+                        document.getElementById('footerText').value = config.bot.footerText || '';
+                        document.getElementById('joinButtonText').value = config.bot.joinButtonText || '';
+                        document.getElementById('joinButtonUrl').value = config.bot.joinButtonUrl || '';
+                        document.getElementById('socialsButtonText').value = config.bot.socialsButtonText || '';
+                        document.getElementById('socialsButtonUrl').value = config.bot.socialsButtonUrl || '';
+                        document.getElementById('githubButtonText').value = config.bot.githubButtonText || '';
+                        document.getElementById('githubButtonUrl').value = config.bot.githubButtonUrl || '';
+                        document.getElementById('welcomeMessage').value = config.bot.welcomeMessage || '';
+                        document.getElementById('verificationMessage').value = config.bot.verificationMessage || '';
+                        
+                        if (config.bot.commandDescriptions) {
+                            document.getElementById('whoamiCommandDesc').value = config.bot.commandDescriptions.whoami || '';
+                            document.getElementById('pingCommandDesc').value = config.bot.commandDescriptions.ping || '';
+                            document.getElementById('commandsCommandDesc').value = config.bot.commandDescriptions.commands || '';
+                            document.getElementById('eightballCommandDesc').value = config.bot.commandDescriptions.eightball || '';
+                            document.getElementById('catCommandDesc').value = config.bot.commandDescriptions.cat || '';
+                            document.getElementById('flipCommandDesc').value = config.bot.commandDescriptions.flip || '';
+                            document.getElementById('verifyCommandDesc').value = config.bot.commandDescriptions.verify || '';
+                            document.getElementById('calendarCommandDesc').value = config.bot.commandDescriptions.calendar || '';
+                        }
+                    }
+                    
+                    // Load env config
+                    if (config.env) {
+                        document.getElementById('DISCORD_TOKEN').value = config.env.DISCORD_TOKEN || '';
+                        document.getElementById('GUILD_ID').value = config.env.GUILD_ID || '';
+                        document.getElementById('DEV_ROLE_ID').value = config.env.DEV_ROLE_ID || '';
+                        document.getElementById('MEMBER_ROLE_ID').value = config.env.MEMBER_ROLE_ID || '';
+                        document.getElementById('SUPABASE_URL').value = config.env.SUPABASE_URL || '';
+                        document.getElementById('SUPABASE_ANON_KEY').value = config.env.SUPABASE_ANON_KEY || '';
+                        document.getElementById('WEB_PORT').value = config.env.WEB_PORT || '3000';
+                        document.getElementById('WEB_SECRET').value = config.env.WEB_SECRET || '';
+                    }
+                } catch (error) {
+                    console.error('Error loading saved configuration:', error);
+                }
+            }
+        }
+
+        // Add event listeners for auto-save
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromLocalStorage();
+            
+            // Auto-save on input changes
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('input', saveToLocalStorage);
+            });
+        });
+    </script>
+</body>
+</html> 

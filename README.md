@@ -4,12 +4,11 @@
 ![NodeJS](https://img.shields.io/badge/NodeJS-v22%2B-%235FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white&logoSize=auto)
 ![Prettier](https://img.shields.io/badge/Prettier-%23F7B93E?style=for-the-badge&logo=prettier&logoColor=black&logoSize=auto)
 
-A **user-friendly Discord bot generator** with a beautiful web interface for easy customization and setup. Perfect for non-technical users who want to create a custom Discord bot for their community without writing code.
+A **user-friendly Discord bot generator** with easy customization and setup. Perfect for non-technical users who want to create a custom Discord bot for their community without writing code.
 
 ## ✨ Features
 
 - 🤖 **Customizable Discord Bot** - Fully configurable bot responses and behavior
-- 🌐 **Web Configuration Interface** - Beautiful, intuitive web UI for bot customization
 - 🔧 **Environment Variable Management** - Easy setup of Discord tokens and API keys
 - 📝 **Command Customization** - Customize what your bot says for each command
 - 🎨 **Visual Customization** - Change colors, messages, and branding
@@ -31,22 +30,15 @@ A **user-friendly Discord bot generator** with a beautiful web interface for eas
     - Download and install Node.js from [nodejs.org](https://nodejs.org/)
     - Choose the LTS version
 
-3. **Start the Web Interface**
+3. **Generate Configuration Files**
 
+    - Visit our [Config Generator](https://yourusername.github.io/config-generator) to create your configuration files
+    - Download the generated `bot-config.json` and `.env` files
+    - Place them in your bot directory
+
+4. **Start Your Bot**
     ```bash
     npm install
-    npm run web
-    ```
-
-4. **Configure Your Bot**
-
-    - Open your web browser and go to `http://localhost:3000`
-    - Use the web interface to configure your bot settings
-    - Enter your Discord bot token and server information
-    - Customize messages, colors, and button links
-
-5. **Start Your Bot**
-    ```bash
     npm run build
     npm start
     ```
@@ -76,15 +68,10 @@ A **user-friendly Discord bot generator** with a beautiful web interface for eas
     MEMBER_ROLE_ID=member_role_id
     SUPABASE_URL=your_supabase_url (optional)
     SUPABASE_ANON_KEY=your_supabase_key (optional)
-    WEB_PORT=3000
-    WEB_SECRET=your_secret_key
     ```
 
-4. **Start the web interface**
-
-    ```bash
-    npm run web
-    ```
+4. **Create bot configuration**
+   Create a `data/bot-config.json` file with your bot settings, or use our [Config Generator](https://yourusername.github.io/config-generator)
 
 5. **Build and start the bot**
     ```bash
@@ -105,30 +92,27 @@ discord-bot-generator/
 │   ├── events/          # Discord event handlers
 │   ├── lib/             # External service integrations
 │   ├── utils/           # Utility functions
-│   ├── web/             # Web interface
-│   │   ├── public/      # Static web files
-│   │   └── server.ts    # Web server
 │   └── index.ts         # Main bot entry point
 ├── data/                # Bot configuration storage
 ├── .env                 # Environment variables
 └── package.json         # Project dependencies
 ```
 
-## 🎛️ Web Interface Features
+## 🎛️ Configuration
 
-### Bot Customization Tab
+### Using the Config Generator
 
-- **General Settings**: Bot name, colors, branding
-- **Command Customization**: Customize `/whoami` command responses
-- **Button Configuration**: Set up external links and social media buttons
-- **Message Customization**: Welcome and verification messages
+We provide a standalone [Config Generator](https://yourusername.github.io/config-generator) that allows you to:
 
-### Environment Variables Tab
+- **Customize Bot Settings**: Bot name, colors, branding, messages
+- **Configure Commands**: Customize descriptions and titles for all slash commands
+- **Set Up Buttons**: Configure external links for the `/whoami` command
+- **Manage Environment Variables**: Set up Discord tokens and server information
+- **Download Files**: Generate ready-to-use configuration files
 
-- **Required Variables**: Discord token, server ID, role IDs
-- **Optional Variables**: Supabase credentials, web interface settings
-- **Validation**: Automatic validation of required fields
-- **Export**: Generate `.env` file for deployment
+### Manual Configuration
+
+All bot customization is stored in `data/bot-config.json` and can be edited manually.
 
 ## 🤖 Available Commands
 
@@ -136,7 +120,7 @@ discord-bot-generator/
 
 - `/whoami` - Display bot information (fully customizable)
 - `/ping` - Check bot latency
-- `/man` - Show command help
+- `/commands` - Show command help
 
 ### Fun Commands
 
@@ -155,7 +139,6 @@ discord-bot-generator/
 
 ```bash
 npm run dev          # Start bot in development mode
-npm run web          # Start web interface
 ```
 
 ### Production Deployment
@@ -163,7 +146,6 @@ npm run web          # Start web interface
 ```bash
 npm run build        # Build the project
 npm start            # Start the bot
-npm run web:build    # Build and start web interface
 ```
 
 ### Cloud Hosting
@@ -187,12 +169,10 @@ The bot can be easily deployed to:
 | `MEMBER_ROLE_ID`    | Member role ID             | ✅       |
 | `SUPABASE_URL`      | Supabase project URL       | ❌       |
 | `SUPABASE_ANON_KEY` | Supabase anonymous API key | ❌       |
-| `WEB_PORT`          | Web interface port         | ❌       |
-| `WEB_SECRET`        | Web interface secret key   | ❌       |
 
 ### Bot Configuration
 
-All bot customization is stored in `data/bot-config.json` and can be managed through the web interface.
+All bot customization is stored in `data/bot-config.json` and can be managed through our [Config Generator](https://yourusername.github.io/config-generator).
 
 ## 🛠️ Development
 
@@ -208,7 +188,6 @@ npm install          # Install dependencies
 npm run dev          # Start development server
 npm run build        # Build for production
 npm run format       # Format code with Prettier
-npm run web          # Start web interface
 ```
 
 ### Adding New Commands
@@ -220,15 +199,14 @@ npm run web          # Start web interface
 ### Adding New Features
 
 1. Extend the `BotConfig` interface in `src/utils/botConfig.ts`
-2. Add UI elements to the web interface
-3. Update the API endpoints in `src/web/server.ts`
+2. Update the [Config Generator](https://yourusername.github.io/config-generator) to include new options
 
 ## 📚 Documentation
 
 ### For Users
 
 - [Getting Started Guide](docs/getting-started.md)
-- [Web Interface Tutorial](docs/web-interface.md)
+- [Configuration Guide](docs/configuration.md)
 - [Deployment Guide](docs/deployment.md)
 
 ### For Developers
@@ -258,10 +236,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [discord.js](https://discord.js.org) - Powerful Discord API wrapper
 - [CommandKit](https://commandkit.js.org) - Command and event handler
 - [Supabase](https://supabase.com) - Open-source Firebase alternative
-- [Express](https://expressjs.com) - Web framework for the configuration interface
 
 ---
 
-<p align="center">
-  <strong>Made with ❤️ for the Discord community</strong>
-</p>
+**Need help configuring your bot?** Use our [Config Generator](https://yourusername.github.io/config-generator) for an easy, no-setup configuration experience!

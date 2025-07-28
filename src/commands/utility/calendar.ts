@@ -9,7 +9,7 @@ import logger from "../../utils/logger.js";
  */
 export const data: CommandData = {
     name: "calendar",
-    description: "Display a list of upcoming DUCA events",
+    description: "Display a list of upcoming events",
     options: [
         {
             name: "category",

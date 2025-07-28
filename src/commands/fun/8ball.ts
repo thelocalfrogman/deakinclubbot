@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import type { CommandData, SlashCommandProps } from "commandkit";
 import logger from "../../utils/logger.js";
+import { getBotConfig } from "../../utils/botConfig.js";
 
 /**
  * Slash command definition for 8ball.
@@ -35,6 +36,9 @@ export async function run({ interaction }: SlashCommandProps): Promise<void> {
         // Defer reply to allow time for the API call
         await interaction.deferReply();
 
+        // Get bot configuration
+        const botConfig = await getBotConfig();
+
         const question = interaction.options.getString("question")!;
 
         // — Query Formatting —
@@ -52,18 +56,21 @@ export async function run({ interaction }: SlashCommandProps): Promise<void> {
         const { reading } = (await response.json()) as { reading: string };
 
         const embed = new EmbedBuilder()
-            .setTitle(`$ 8-ball "${displayQuestion}"`)
+            .setTitle(`${botConfig.commandOutputs?.eightball?.title || "$ 8-ball"} "${displayQuestion}"`)
             .setDescription(reading)
-            .setColor(0x00aeef)
-            .setFooter({ text: "via eightballapi.com" });
+            .setColor(parseInt(botConfig.botColor.replace('#', ''), 16))
+            .setFooter({ text: botConfig.footerText || "Discord Bot Generator" });
 
         await interaction.editReply({ embeds: [embed] });
         logger("[/8ball]", "success", interaction.user.username);
     } catch (error) {
+        // Get bot configuration for error handling
+        const botConfig = await getBotConfig();
+        
         const errorEmbed = new EmbedBuilder()
             .setTitle("$ 8-ball")
             .setDescription(
-                "We’re sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
+                botConfig.commandOutputs?.eightball?.errorMessage || "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
             )
             .setColor(0xff3333)
             .setFooter({ text: "exit status: 1" });

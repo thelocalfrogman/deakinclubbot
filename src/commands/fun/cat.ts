@@ -1,6 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import type { CommandData, SlashCommandProps } from "commandkit";
 import logger from "../../utils/logger.js";
+import { getBotConfig } from "../../utils/botConfig.js";
 
 /**
  * Slash command definition for cat.
@@ -25,6 +26,9 @@ export async function run({ interaction }: SlashCommandProps): Promise<void> {
         // Defer to allow time for fetching image and building embed
         await interaction.deferReply();
 
+        // Get bot configuration
+        const botConfig = await getBotConfig();
+
         // — Define valid HTTP status codes for http.cat —
         const validStatusCodes = [
             100, 101, 102, 103, 200, 201, 202, 203, 204, 206, 207, 300, 301, 302, 303, 304, 305, 307, 308, 400, 401,
@@ -39,18 +43,21 @@ export async function run({ interaction }: SlashCommandProps): Promise<void> {
 
         // — Build embed with the http.cat image and color based on code range —
         const embed = new EmbedBuilder()
-            .setTitle(`$ http ${statusCode}`)
+            .setTitle(`${botConfig.commandOutputs?.cat?.title || "$ cat"} ${statusCode}`)
             .setImage(`https://http.cat/${statusCode}`)
-            .setColor(getColorForStatus(statusCode))
-            .setFooter({ text: "via http.cat" });
+            .setColor(parseInt(botConfig.botColor.replace('#', ''), 16))
+            .setFooter({ text: botConfig.footerText || "Discord Bot Generator" });
 
         await interaction.editReply({ embeds: [embed] });
         logger("[/cat]", "success", interaction.user.username);
     } catch (error) {
+        // Get bot configuration for error handling
+        const botConfig = await getBotConfig();
+        
         const errorEmbed = new EmbedBuilder()
             .setTitle("$ cat")
             .setDescription(
-                "We’re sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
+                botConfig.commandOutputs?.cat?.errorMessage || "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
             )
             .setColor(0xff3333)
             .setFooter({ text: "exit status: 1" });
@@ -58,18 +65,4 @@ export async function run({ interaction }: SlashCommandProps): Promise<void> {
         await interaction.editReply({ embeds: [errorEmbed] });
         logger("[/cat] " + String(error), "error", interaction.user.username);
     }
-}
-
-/**
- * Returns an embed color based on the HTTP status code range.
- * @param {number} code - The HTTP status code.
- * @returns {number} The hex color to use for the embed.
- */
-function getColorForStatus(code: number): number {
-    if (code >= 100 && code < 200) return 0x6495ed; // Blue
-    if (code >= 200 && code < 300) return 0x2ecc71; // Green
-    if (code >= 300 && code < 400) return 0xf1c40f; // Yellow
-    if (code >= 400 && code < 500) return 0xe74c3c; // Red
-    if (code >= 500) return 0x34495e; // Dark Blue/Gray
-    return 0x7289da; // Discord blue as fallback
 }

@@ -1,6 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import type { CommandData, SlashCommandProps } from "commandkit";
 import logger from "../../utils/logger.js";
+import { getBotConfig } from "../../utils/botConfig.js";
 
 /**
  * Slash command definition for flip.
@@ -25,22 +26,29 @@ export async function run({ interaction }: SlashCommandProps): Promise<void> {
         // Defer to allow time for generating result and building embed
         await interaction.deferReply();
 
+        // Get bot configuration
+        const botConfig = await getBotConfig();
+
         // — Generate random coin flip outcome —
         const randomNumber = Math.random();
         const result = randomNumber < 0.5 ? "heads" : "tails";
 
         const embed = new EmbedBuilder()
-            .setTitle("$ flip")
-            .setDescription(`\\> output :: **${result}**`)
-            .setColor(0x00aeef);
+            .setTitle(botConfig.commandOutputs?.flip?.title || "$ flip")
+            .setDescription(botConfig.commandOutputs?.flip?.format?.replace('{result}', result) || `\\> output :: **${result}**`)
+            .setColor(parseInt(botConfig.botColor.replace('#', ''), 16))
+            .setFooter({ text: botConfig.footerText || "Discord Bot Generator" });
 
         await interaction.editReply({ embeds: [embed] });
         logger("[/flip]", "success", interaction.user.username);
     } catch (error) {
+        // Get bot configuration for error handling
+        const botConfig = await getBotConfig();
+        
         const errorEmbed = new EmbedBuilder()
             .setTitle("$ flip")
             .setDescription(
-                "We’re sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
+                botConfig.commandOutputs?.flip?.errorMessage || "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
             )
             .setColor(0xff3333)
             .setFooter({ text: "exit status: 1" });

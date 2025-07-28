@@ -1,6 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import type { CommandData, SlashCommandProps } from "commandkit";
 import logger from "../../utils/logger.js";
+import { getBotConfig } from "../../utils/botConfig.js";
 
 /**
  * Slash command definition for ping.
@@ -13,36 +14,36 @@ export const data: CommandData = {
 
 /**
  * Main handler for the /ping command.
- * Measures round-trip latency and websocket heartbeat, and replies with an embed.
+ * Calculates latency and replies with an embed.
  * @param {SlashCommandProps} props - The command properties provided by CommandKit.
  * @param {Client<true>} props.client - The Discord.js client instance.
  * @param {import("commandkit").CommandKit} props.handler - The CommandKit handler instance.
  * @param {ChatInputCommandInteraction<import("discord.js").CacheType>} props.interaction - The slash command interaction.
  * @returns {Promise<void>} Resolves after editing the deferred reply.
  */
-export async function run({ interaction, client }: SlashCommandProps): Promise<void> {
+export async function run({ interaction }: SlashCommandProps): Promise<void> {
     try {
         await interaction.deferReply();
 
-        // — Measure round-trip latency —
-        const reply = await interaction.fetchReply();
-        const ping = reply.createdTimestamp - interaction.createdTimestamp;
+        // Get bot configuration
+        const botConfig = await getBotConfig();
 
-        const pong = new EmbedBuilder()
-            .setTitle("$ ping")
-            .addFields(
-                { name: "latency(rtt)", value: `\`${ping}ms\``, inline: true },
-                { name: "socket.heartbeat", value: `\`${client.ws.ping}ms\``, inline: true },
-            )
-            .setColor(0x00aeef);
+        const sent = await interaction.editReply({ content: "Pinging..." });
+        const latency = sent.createdTimestamp - interaction.createdTimestamp;
 
-        await interaction.editReply({ embeds: [pong] });
+        const embed = new EmbedBuilder()
+            .setTitle(botConfig.commandOutputs?.ping?.title || "$ ping")
+            .setDescription(botConfig.commandOutputs?.ping?.format?.replace('{latency}', latency.toString()) || `\\> latency :: **${latency}ms**`)
+            .setColor(parseInt(botConfig.botColor.replace('#', ''), 16))
+            .setFooter({ text: botConfig.footerText || "Discord Bot Generator" });
+
+        await interaction.editReply({ embeds: [embed] });
         logger("[/ping]", "success", interaction.user.username);
     } catch (error) {
         const errorEmbed = new EmbedBuilder()
             .setTitle("$ ping")
             .setDescription(
-                "We’re sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
+                "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
             )
             .setColor(0xff3333)
             .setFooter({ text: "exit status: 1" });

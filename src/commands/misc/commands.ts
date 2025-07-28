@@ -1,13 +1,14 @@
 import { EmbedBuilder } from "discord.js";
 import type { CommandData, SlashCommandProps } from "commandkit";
 import logger from "../../utils/logger.js";
+import { getBotConfig } from "../../utils/botConfig.js";
 
 /**
- * Slash command definition for man.
+ * Slash command definition for commands.
  * @type {CommandData}
  */
 export const data: CommandData = {
-    name: "man",
+    name: "commands",
     description: "Display a list of all available commands",
 };
 
@@ -24,24 +25,37 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
     try {
         await interaction.deferReply();
 
+        // Get bot configuration
+        const botConfig = await getBotConfig();
+
         // — Retrieve bot avatar URL for thumbnail —
         const avatarUrl = client.user?.avatarURL() ?? undefined;
 
         // — Build the commands list embed —
         const embed = new EmbedBuilder()
-            .setTitle("$ man duca-sentinel")
+            .setTitle(botConfig.commandTitles?.commands || "$ commands")
             .setDescription(
-                "**DUCA Sentinel Commands Manual**\n Below is a complete list of all slash commands for DUCA Sentinel seperated by category:",
+                botConfig.commandTitles?.commandsDescription || "**Commands Manual**\nBelow is a complete list of all slash commands separated by category:",
             )
             .addFields(
                 // Entertainment
-                { name: "/usr/bin/lol", value: "`8ball` `cat` `flip`" },
+                { 
+                    name: botConfig.commandOutputs?.commands?.entertainmentTitle || "/usr/bin/lol", 
+                    value: botConfig.commandOutputs?.commands?.entertainmentCommands || "`8ball` `cat` `flip`" 
+                },
                 // Utility
-                { name: "/core/utils", value: "`calendar` `ping` `verify`" },
+                { 
+                    name: botConfig.commandOutputs?.commands?.utilityTitle || "/core/utils", 
+                    value: botConfig.commandOutputs?.commands?.utilityCommands || "`calendar` `ping` `verify`" 
+                },
                 // Misc
-                { name: "/etc/extra", value: "`man` `whoami`" },
+                { 
+                    name: botConfig.commandOutputs?.commands?.miscTitle || "/etc/extra", 
+                    value: botConfig.commandOutputs?.commands?.miscCommands || "`commands` `whoami`" 
+                },
             )
-            .setColor(0x00aeef);
+            .setColor(parseInt(botConfig.botColor.replace('#', ''), 16))
+            .setFooter({ text: botConfig.footerText || "Discord Bot Generator" });
 
         // Append thumbnail if available
         if (avatarUrl) {
@@ -51,15 +65,18 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         await interaction.editReply({ embeds: [embed] });
         logger("[/man]", "success", interaction.user.username);
     } catch (error) {
+        // Get bot configuration for error handling
+        const botConfig = await getBotConfig();
+        
         const errorEmbed = new EmbedBuilder()
-            .setTitle("$ man duca-sentinel")
+            .setTitle(botConfig.commandTitles?.commands || "$ commands")
             .setDescription(
-                "We’re sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
+                "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
             )
             .setColor(0xff3333)
             .setFooter({ text: "exit status: 1" });
 
         await interaction.editReply({ embeds: [errorEmbed] });
-        logger("[/man] " + String(error), "error", interaction.user.username);
+        logger("[/commands] " + String(error), "error", interaction.user.username);
     }
 }

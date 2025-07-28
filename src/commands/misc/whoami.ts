@@ -54,7 +54,7 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
                 { name: "Uptime", value: `\`${uptime}\``, inline: true },
                 { name: "Memory Usage", value: `\`${usedMB} MB / ${totalMB} MB\``, inline: true },
             )
-            .setColor(0x00aeef)
+            .setColor(parseInt(botConfig.botColor.replace('#', ''), 16))
             .setFooter({ text: botConfig.footerText || "Discord Bot Generator" });
 
         if (avatarUrl) {
