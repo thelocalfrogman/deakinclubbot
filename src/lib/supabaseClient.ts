@@ -13,7 +13,7 @@ interface VerifiedMember {
 }
 
 /**
- * Represents a DUCA member record from the membership list.
+ * Represents a member record from the membership list.
  */
 interface MemberList {
     full_name: string;
@@ -41,7 +41,7 @@ interface Database {
         /** Fields allowed when updating a verified member */
         Update: Partial<VerifiedMember>;
     };
-    /** Table of DUCA membership list details */
+    /** Table of membership list details */
     member_list: {
         Row: MemberList;
         /** Fields required when inserting a member list record */
@@ -53,7 +53,7 @@ interface Database {
 
 /**
  * Supabase client instance configured with service-role credentials.
- * Provides typed access to the DUCA database.
+ * Provides typed access to the database.
  * Only initialized if Supabase credentials are provided.
  *
  * @type {SupabaseClient<Database> | null}

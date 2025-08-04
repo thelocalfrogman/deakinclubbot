@@ -4,9 +4,7 @@ import type { CommandData, SlashCommandProps } from "commandkit";
 import { isSupabaseAvailable, getSupabaseClient } from "../../lib/supabaseClient.js";
 import memberCache from "../../utils/memberCache.js";
 import logger from "../../utils/logger.js";
-
-const MEMBER_ANNOUNCEMENTS_CHANNEL = "<#1347067213160644659>";
-const MEMBER_RESOURCES_CHANNEL = "<#1344439191110422588>";
+import { getBotConfig } from "../../utils/botConfig.js";
 
 /**
  * Slash command definition for verify.
@@ -57,13 +55,13 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         const guild = client.guilds.cache.get(GUILD_ID);
         if (!guild) {
             logger("[/verify] Invalid guild", "error", username);
-            return safeReply(interaction, createErrorEmbed());
+            return safeReply(interaction, await createErrorEmbed());
         }
 
         const role = guild.roles.cache.get(MEMBER_ROLE_ID);
         if (!role) {
             logger("[/verify] Invalid role", "error", username);
-            return safeReply(interaction, createErrorEmbed());
+            return safeReply(interaction, await createErrorEmbed());
         }
 
         // Fetch member to inspect and modify roles
@@ -91,12 +89,12 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
                     logger("[/verify] Restored missing role", "success", username);
                 } catch {
                     logger("[/verify] Unable to restore role", "error", username);
-                    return safeReply(interaction, createInfoEmbed(role.toString()));
+                    return safeReply(interaction, await createInfoEmbed(role.toString()));
                 }
             }
 
             logger("[/verify] Already verified", "info", username);
-            return safeReply(interaction, createInfoEmbed(role.toString()));
+            return safeReply(interaction, await createInfoEmbed(role.toString()));
         }
 
         // — Membership Validation —
@@ -104,17 +102,17 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         await memberCache.refresh();
         if (!memberCache.has(email)) {
             logger("[/verify] Invalid email", "info", username);
-            return safeReply(interaction, createErrorEmbed());
+            return safeReply(interaction, await createErrorEmbed());
         }
         const fullName = memberCache.getFullName(email);
         if (!fullName) {
             logger("[/verify] Could not retrieve full name", "error", username);
-            return safeReply(interaction, createErrorEmbed());
+            return safeReply(interaction, await createErrorEmbed());
         }
         const endDate = memberCache.getEndDate(email);
         if (!endDate) {
             logger("[/verify] Could not retrieve end date", "error", username);
-            return safeReply(interaction, createErrorEmbed());
+            return safeReply(interaction, await createErrorEmbed());
         }
 
         // — Role Assignment & Database Upsert —
@@ -122,7 +120,7 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
             await member.roles.add(role);
         } catch {
             logger("[/verify] Invalid permissions", "error", username);
-            return safeReply(interaction, createErrorEmbed());
+            return safeReply(interaction, await createErrorEmbed());
         }
 
         // Upsert handles both insert and update to prevent duplicates
@@ -150,23 +148,22 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         }
 
         logger("[/verify]", "success", username);
-        return safeReply(interaction, createSuccessEmbed(role.toString()));
+        return safeReply(interaction, await createSuccessEmbed(role.toString()));
     } catch (error) {
         logger("[/verify] " + String(error), "error", interaction.user.username);
-        return safeReply(interaction, createErrorEmbed());
+        return safeReply(interaction, await createErrorEmbed());
     }
 }
 
 /**
  * Generic error embed.
- * @returns {EmbedBuilder}
+ * @returns {Promise<EmbedBuilder>}
  */
-function createErrorEmbed(): EmbedBuilder {
+async function createErrorEmbed(): Promise<EmbedBuilder> {
+    const botConfig = await getBotConfig();
     return new EmbedBuilder()
-        .setTitle("$ verify")
-        .setDescription(
-            "We're sorry — an unexpected error occurred.\n Please try again later or contact an administrator if the issue persists.",
-        )
+        .setTitle(botConfig.commandOutputs.verify.title)
+        .setDescription(botConfig.commandOutputs.verify.errorMessage)
         .addFields({
             name: "Known Issues",
             value: "Due to a limitation from DUSA, it may take up to one week for your details to appear in our system. We appreciate your patience!",
@@ -178,29 +175,36 @@ function createErrorEmbed(): EmbedBuilder {
 /**
  * Success embed.
  * @param {string} roleName
- * @returns {EmbedBuilder}
+ * @returns {Promise<EmbedBuilder>}
  */
-function createSuccessEmbed(roleName: string): EmbedBuilder {
+async function createSuccessEmbed(roleName: string): Promise<EmbedBuilder> {
+    const botConfig = await getBotConfig();
+    const successMessage = botConfig.commandOutputs.verify.successMessage.replace('{roleName}', roleName);
+    const successDescription = botConfig.commandOutputs.verify.successDescription
+        .replace('{memberAnnouncementsChannel}', botConfig.commandOutputs.verify.memberAnnouncementsChannel)
+        .replace('{memberResourcesChannel}', botConfig.commandOutputs.verify.memberResourcesChannel);
+    
     return new EmbedBuilder()
-        .setTitle("$ verify")
-        .setDescription(
-            `**You have been granted ${roleName}!**\n Explore ${MEMBER_ANNOUNCEMENTS_CHANNEL} and ${MEMBER_RESOURCES_CHANNEL} for exclusive member content.`,
-        )
+        .setTitle(botConfig.commandOutputs.verify.title)
+        .setDescription(`${successMessage}\n ${successDescription}`)
         .setColor(0x33cc33)
-        .setFooter({ text: "Thank you for being a valued DUCA member 💗" });
+        .setFooter({ text: botConfig.verificationFooterText });
 }
 
 /**
  * Informational embed.
  * @param {string} roleName
- * @returns {EmbedBuilder}
+ * @returns {Promise<EmbedBuilder>}
  */
-function createInfoEmbed(roleName: string): EmbedBuilder {
+async function createInfoEmbed(roleName: string): Promise<EmbedBuilder> {
+    const botConfig = await getBotConfig();
+    const alreadyVerifiedMessage = botConfig.commandOutputs.verify.alreadyVerifiedMessage.replace('{roleName}', roleName);
+    
     return new EmbedBuilder()
-        .setTitle("$ verify")
-        .setDescription(`You are already a **${roleName}** — no further action needed!`)
+        .setTitle(botConfig.commandOutputs.verify.title)
+        .setDescription(alreadyVerifiedMessage)
         .setColor(0x00aeef)
-        .setFooter({ text: "Thank you for being a valued DUCA member 💗" });
+        .setFooter({ text: botConfig.verificationFooterText });
 }
 
 /**

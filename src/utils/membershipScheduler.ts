@@ -3,6 +3,7 @@ import { Client, EmbedBuilder } from "discord.js";
 import { isSupabaseAvailable, getSupabaseClient } from "../lib/supabaseClient.js";
 import logger from "./logger.js";
 import { getTodayInDDMMYY } from "./dateUtils.js";
+import { getBotConfig } from "./botConfig.js";
 
 /**
  * Schedules daily membership expiration checks at 9:00 AM.
@@ -99,19 +100,19 @@ export class MembershipScheduler {
     private async sendExpirationNotification(discordId: string, username: string, fullName: string): Promise<void> {
         try {
             const user = await this.client.users.fetch(discordId);
+            const botConfig = await getBotConfig();
+            
+            // Replace placeholders in the message
+            const description = botConfig.commandOutputs.verify.membershipExpirationNotice.description
+                .replace('{fullName}', fullName)
+                .replace('{club}', botConfig.organizationName);
             
             const embed = new EmbedBuilder()
-                .setTitle("🔔 Membership Expiration Notice")
-                .setDescription(
-                    `Hi ${fullName},\n\n` +
-                    `This is a friendly reminder that your membership expires **today**.\n\n` +
-                    `**As of next Friday, you will no longer have the @Member role** and will need to re-verify.\n\n` +
-                    `To maintain your membership benefits, please renew your membership and run the \`/verify\` command again next Friday evening.\n\n` +
-                    `Thank you for being a valued DUCA member! 💗`
-                )
+                .setTitle(botConfig.commandOutputs.verify.membershipExpirationNotice.title)
+                .setDescription(description)
                 .setColor(0xff9500) // Orange color for warning
                 .setFooter({ 
-                    text: "DUCA Membership System",
+                    text: botConfig.commandOutputs.verify.membershipExpirationNotice.footer,
                     iconURL: this.client.user?.displayAvatarURL() 
                 })
                 .setTimestamp();

@@ -1,6 +1,7 @@
 import { EmbedBuilder, MessageFlags, PermissionFlagsBits } from "discord.js";
 import type { CommandData, SlashCommandProps } from "commandkit";
 import { isSupabaseAvailable, getSupabaseClient } from "../../lib/supabaseClient.js";
+import { getBotConfig } from "../../utils/botConfig.js";
 import logger from "../../utils/logger.js";
 import { getTodayInDDMMYY } from "../../utils/dateUtils.js";
 
@@ -62,18 +63,20 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
             try {
                 const user = await client.users.fetch(member.discord_id);
                 
+                // Get bot configuration for customizable messages
+                const botConfig = await getBotConfig();
+                
+                // Replace placeholders in the message
+                const description = botConfig.commandOutputs.verify.membershipExpirationNotice.description
+                    .replace('{fullName}', member.full_name)
+                    .replace('{club}', botConfig.organizationName);
+
                 const embed = new EmbedBuilder()
-                    .setTitle("🔔 Membership Expiration Notice")
-                    .setDescription(
-                        `Hi ${member.full_name},\n\n` +
-                        `This is a friendly reminder that your membership expires **today**.\n\n` +
-                        `**As of next Friday, you will no longer have the @Member role** and will need to re-verify.\n\n` +
-                        `To maintain your membership benefits, please renew your membership and run the \`/verify\` command again next Friday evening.\n\n` +
-                        `Thank you for being a valued DUCA member! 💗`
-                    )
+                    .setTitle(botConfig.commandOutputs.verify.membershipExpirationNotice.title)
+                    .setDescription(description)
                     .setColor(0xff9500) // Orange color for warning
                     .setFooter({ 
-                        text: "DUCA Membership System",
+                        text: botConfig.commandOutputs.verify.membershipExpirationNotice.footer,
                         iconURL: client.user?.displayAvatarURL() 
                     })
                     .setTimestamp();

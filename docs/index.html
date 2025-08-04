@@ -317,9 +317,9 @@
 
         <div class="content">
             <div class="tabs">
-                <button class="tab active" onclick="showTab('bot')">Bot Customisation</button>
-                <button class="tab" onclick="showTab('env')">Environment Variables</button>
-                <button class="tab" onclick="showTab('download')">Download Files</button>
+                <button class="tab active" onclick="showTab('bot', this)">Bot Customisation</button>
+                <button class="tab" onclick="showTab('env', this)">Environment Variables</button>
+                <button class="tab" onclick="showTab('download', this)">Download Files</button>
             </div>
 
             <div id="alert" class="alert"></div>
@@ -333,9 +333,35 @@
                         <input type="text" id="botName" placeholder="Enter your bot's name" value="Discord Bot">
                     </div>
                     <div class="form-group">
+                        <label for="organizationName">Club Name</label>
+                        <input type="text" id="organizationName" placeholder="Your organisation or club name" value="Your Club">
+                        <div class="help-text">Used in member messages and general references to your club</div>
+                    </div>
+                    <div class="form-group">
                         <label for="botColor">Bot Color (Hex)</label>
                         <input type="color" id="botColor" value="#00aeef">
                         <div class="help-text">This color will be used for embeds and UI elements</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Bot Status & Activity</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="botActivityMessage">Bot Activity Message</label>
+                            <input type="text" id="botActivityMessage" placeholder="What your bot is watching/playing" value="your community 👀">
+                            <div class="help-text">The message shown in the bot's status (e.g., "Watching your community 👀")</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="botActivityType">Activity Type</label>
+                            <select id="botActivityType">
+                                <option value="Watching">Watching</option>
+                                <option value="Playing">Playing</option>
+                                <option value="Listening">Listening to</option>
+                                <option value="Competing">Competing in</option>
+                            </select>
+                            <div class="help-text">The type of activity shown in the bot's status</div>
+                        </div>
                     </div>
                 </div>
 
@@ -440,6 +466,78 @@
                         <label for="verificationMessage">Verification Message</label>
                         <textarea id="verificationMessage" placeholder="Message to display when members are verified">You have been successfully verified!</textarea>
                     </div>
+                    
+                    <h4 style="margin-top: 30px; margin-bottom: 15px; color: #495057;">Verification Command Messages</h4>
+                    <div class="form-group">
+                        <label for="verifySuccessMessage">Success Message</label>
+                        <input type="text" id="verifySuccessMessage" placeholder="Message shown when verification succeeds" value="**You have been granted {roleName}!**">
+                        <div class="help-text">Use {roleName} placeholder - automatically populated with the actual role name from Discord</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="verifySuccessDescription">Success Description</label>
+                        <textarea id="verifySuccessDescription" placeholder="Additional description shown after successful verification">Explore {memberAnnouncementsChannel} and {memberResourcesChannel} for exclusive member content.</textarea>
+                        <div class="help-text">Use {memberAnnouncementsChannel} and {memberResourcesChannel} placeholders - configure the actual channel IDs below</div>
+                    </div>
+                    
+                    <h4 style="margin-top: 30px; margin-bottom: 15px; color: #495057;">Channel Configuration</h4>
+                    <div class="help-text" style="margin-bottom: 15px; background: #e8f5e8; padding: 10px; border-radius: 4px; border-left: 4px solid #4caf50;">
+                        <strong>💡 Easy Setup:</strong> Right-click your Discord channels and select "Copy Channel ID", then paste the numbers below. The bot will automatically format them as clickable channel links.
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="memberAnnouncementsChannelId">Member Announcements Channel ID</label>
+                            <input type="text" id="memberAnnouncementsChannelId" placeholder="e.g., 1347067213160644659">
+                            <div class="help-text">Right-click your announcements channel → "Copy Channel ID"</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="memberResourcesChannelId">Member Resources Channel ID</label>
+                            <input type="text" id="memberResourcesChannelId" placeholder="e.g., 1344439191110422588">
+                            <div class="help-text">Right-click your resources channel → "Copy Channel ID"</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="verifyAlreadyVerifiedMessage">Already Verified Message</label>
+                        <input type="text" id="verifyAlreadyVerifiedMessage" placeholder="Message shown when user is already verified" value="You are already a **{roleName}** — no further action needed!">
+                        <div class="help-text">Use {roleName} placeholder - automatically populated with the actual role name from Discord</div>
+                    </div>
+                    
+                    <h4 style="margin-top: 30px; margin-bottom: 15px; color: #495057;">Membership Expiration Notice</h4>
+                    <div class="help-text" style="margin-bottom: 15px;">These settings control the DM message sent to users when their membership expires</div>
+                    <div class="form-group">
+                        <label for="expirationNoticeTitle">Expiration Notice Title</label>
+                        <input type="text" id="expirationNoticeTitle" placeholder="Title of the expiration notice" value="🔔 Membership Expiration Notice">
+                    </div>
+                    <div class="form-group">
+                        <label for="expirationNoticeDescription">Expiration Notice Message</label>
+                        <textarea id="expirationNoticeDescription" placeholder="Main message content for expiration notice" style="min-height: 120px;">Hi {fullName},
+
+This is a friendly reminder that your membership expires **today**.
+
+**As of next Friday, you will no longer have the @Member role** and will need to re-verify.
+
+To maintain your membership benefits, please renew your membership and run the `/verify` command again next Friday evening.
+
+Thank you for being a valued club member! 💗</textarea>
+                        <div class="help-text">Use {fullName} placeholder - automatically populated from the membership database.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="expirationNoticeFooter">Expiration Notice Footer</label>
+                        <input type="text" id="expirationNoticeFooter" placeholder="Footer text for expiration notice" value="Your Club Membership System">
+                    </div>
+                    
+                    <h4 style="margin-top: 30px; margin-bottom: 15px; color: #495057;">General Verification Messages</h4>
+                    <div class="help-text" style="margin-bottom: 15px;">These settings control the footer messages shown in verification-related embeds</div>
+                    <div class="form-group">
+                        <label for="verificationFooterText">Verification Footer Text</label>
+                        <input type="text" id="verificationFooterText" placeholder="Footer text for verification messages" value="Thank you for being a valued member! 💗">
+                        <div class="help-text">Shown at the bottom of verification success and info messages</div>
+                    </div>
+                </div>
+
+                <div style="background: #e8f5e8; border: 2px solid #4caf50; border-radius: 8px; padding: 15px; margin-top: 30px; text-align: center;">
+                    <h4 style="color: #2e7d32; margin-bottom: 10px;">💡 Need inspiration?</h4>
+                    <p style="color: #388e3c; margin-bottom: 15px;">See how DUCA (Deakin University Cybersecurity Association) would configure their bot</p>
+                    <a href="example.html" class="btn btn-secondary" target="_blank">📚 View DUCA Example Configuration</a>
                 </div>
             </div>
 
@@ -494,6 +592,29 @@
             <!-- Download Tab -->
             <div id="download-tab" class="tab-content">
                 <div class="section">
+                    <h3>Import Existing Configuration</h3>
+                    <p>Upload an existing bot-config.json file to edit its values:</p>
+                    
+                    <div class="download-section">
+                        <h4>Import bot-config.json</h4>
+                        <p>Upload your existing configuration file to load all settings into the form above.</p>
+                        
+                        <div class="file-upload-area" onclick="document.getElementById('configFile').click()" ondrop="handleConfigDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <input type="file" id="configFile" class="file-upload-input" accept=".json" onchange="handleConfigUpload(event)">
+                            <div id="config-upload-text">
+                                <strong>Click to select a bot-config.json file</strong><br>
+                                or drag and drop it here<br>
+                                <small>Supported format: .json</small>
+                            </div>
+                        </div>
+                        
+                        <div id="config-file-info" class="file-info" style="display: none;"></div>
+                        
+                        <button class="btn btn-success" id="import-config-btn" onclick="importConfig()" style="display: none;">Import Configuration</button>
+                    </div>
+                </div>
+
+                <div class="section">
                     <h3>Generated Configuration Files</h3>
                     <p>Review and download your configuration files below:</p>
                     
@@ -542,7 +663,7 @@
     </footer>
 
     <script>
-        function showTab(tabName) {
+        function showTab(tabName, button) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
@@ -556,16 +677,45 @@
             // Show selected tab content
             document.getElementById(tabName + '-tab').classList.add('active');
             
-            // Add active class to selected tab
-            event.target.classList.add('active');
+            // Add active class to the correct tab button
+            if (button) {
+                // Button clicked directly
+                button.classList.add('active');
+            } else {
+                // Called programmatically, find the right button
+                const tabs = document.querySelectorAll('.tab');
+                if (tabName === 'bot') {
+                    tabs[0].classList.add('active');
+                } else if (tabName === 'env') {
+                    tabs[1].classList.add('active');
+                } else if (tabName === 'download') {
+                    tabs[2].classList.add('active');
+                }
+            }
+        }
+
+        function formatChannelId(channelId) {
+            if (!channelId || !channelId.trim()) return '';
+            // Remove any existing <# > formatting and whitespace
+            const cleanId = channelId.trim().replace(/^<#/, '').replace(/>$/, '');
+            // Validate it's a valid Discord ID (should be a long number)
+            if (!/^\d{17,19}$/.test(cleanId)) return '';
+            // Return properly formatted channel mention
+            return `<#${cleanId}>`;
         }
 
         function getBotConfig() {
             return {
                 botName: document.getElementById('botName').value || 'Discord Bot',
+                organizationName: document.getElementById('organizationName').value || 'Your Club',
                 botColor: document.getElementById('botColor').value || '#00aeef',
+                botActivityMessage: document.getElementById('botActivityMessage').value || 'your community 👀',
+                botActivityType: document.getElementById('botActivityType').value || 'Watching',
                 whoamiDescription: document.getElementById('whoamiDescription').value || 'A customisable Discord bot for your community.',
                 footerText: document.getElementById('footerText').value || 'Discord Bot Generator',
+                verificationFooterText: document.getElementById('verificationFooterText').value || 'Thank you for being a valued member! 💗',
+                memberAnnouncementsChannelId: document.getElementById('memberAnnouncementsChannelId').value || '',
+                memberResourcesChannelId: document.getElementById('memberResourcesChannelId').value || '',
                 joinButtonText: document.getElementById('joinButtonText').value || '',
                 joinButtonUrl: document.getElementById('joinButtonUrl').value || '',
                 socialsButtonText: document.getElementById('socialsButtonText').value || '',
@@ -621,10 +771,16 @@
                     verify: {
                         title: "$ verify",
                         errorMessage: "We're sorry — an unexpected error occurred.\n Please try again later or contact an administrator if the issue persists.",
-                        successMessage: "**You have been successfully verified!**",
-                        alreadyVerifiedMessage: "You are already verified — no further action needed!",
-                        memberAnnouncementsChannel: "<#1347067213160644659>",
-                        memberResourcesChannel: "<#1344439191110422588>"
+                        successMessage: document.getElementById('verifySuccessMessage').value || "**You have been granted {roleName}!**",
+                        successDescription: document.getElementById('verifySuccessDescription').value || "Explore {memberAnnouncementsChannel} and {memberResourcesChannel} for exclusive member content.",
+                        alreadyVerifiedMessage: document.getElementById('verifyAlreadyVerifiedMessage').value || "You are already a **{roleName}** — no further action needed!",
+                        membershipExpirationNotice: {
+                            title: document.getElementById('expirationNoticeTitle').value || "🔔 Membership Expiration Notice",
+                            description: document.getElementById('expirationNoticeDescription').value || "Hi {fullName},\n\nThis is a friendly reminder that your membership expires **today**.\n\n**As of next Friday, you will no longer have the @Member role** and will need to re-verify.\n\nTo maintain your membership benefits, please renew your membership and run the `/verify` command again next Friday evening.\n\nThank you for being a valued {club} member! 💗",
+                            footer: document.getElementById('expirationNoticeFooter').value || "Your Club Membership System"
+                        },
+                        memberAnnouncementsChannel: formatChannelId(document.getElementById('memberAnnouncementsChannelId').value) || "",
+                        memberResourcesChannel: formatChannelId(document.getElementById('memberResourcesChannelId').value) || ""
                     },
                     calendar: {
                         title: "$ calendar",
@@ -733,10 +889,16 @@
                     
                     // Load bot config
                     if (config.bot) {
-                        document.getElementById('botName').value = config.bot.botName || '';
+                        document.getElementById('botName').value = config.bot.botName || 'Discord Bot';
+                        document.getElementById('organizationName').value = config.bot.organizationName || 'Your Club';
                         document.getElementById('botColor').value = config.bot.botColor || '#00aeef';
+                        document.getElementById('botActivityMessage').value = config.bot.botActivityMessage || '';
+                        document.getElementById('botActivityType').value = config.bot.botActivityType || 'Watching';
                         document.getElementById('whoamiDescription').value = config.bot.whoamiDescription || '';
                         document.getElementById('footerText').value = config.bot.footerText || '';
+                        document.getElementById('verificationFooterText').value = config.bot.verificationFooterText || '';
+                        document.getElementById('memberAnnouncementsChannelId').value = config.bot.memberAnnouncementsChannelId || '';
+                        document.getElementById('memberResourcesChannelId').value = config.bot.memberResourcesChannelId || '';
                         document.getElementById('joinButtonText').value = config.bot.joinButtonText || '';
                         document.getElementById('joinButtonUrl').value = config.bot.joinButtonUrl || '';
                         document.getElementById('socialsButtonText').value = config.bot.socialsButtonText || '';
@@ -744,6 +906,30 @@
                         document.getElementById('githubButtonText').value = config.bot.githubButtonText || '';
                         document.getElementById('githubButtonUrl').value = config.bot.githubButtonUrl || '';
                         document.getElementById('verificationMessage').value = config.bot.verificationMessage || '';
+                        
+                        // Load new verification message fields
+                        if (config.bot.commandOutputs && config.bot.commandOutputs.verify) {
+                            const verifyConfig = config.bot.commandOutputs.verify;
+                            document.getElementById('verifySuccessMessage').value = verifyConfig.successMessage || '';
+                            document.getElementById('verifySuccessDescription').value = verifyConfig.successDescription || '';
+                            document.getElementById('verifyAlreadyVerifiedMessage').value = verifyConfig.alreadyVerifiedMessage || '';
+                            
+                            if (verifyConfig.membershipExpirationNotice) {
+                                document.getElementById('expirationNoticeTitle').value = verifyConfig.membershipExpirationNotice.title || '';
+                                document.getElementById('expirationNoticeDescription').value = verifyConfig.membershipExpirationNotice.description || '';
+                                document.getElementById('expirationNoticeFooter').value = verifyConfig.membershipExpirationNotice.footer || '';
+                            }
+                            
+                            // Load channel IDs (extract just the ID from <#ID> format)
+                            if (verifyConfig.memberAnnouncementsChannel) {
+                                const announcementsId = verifyConfig.memberAnnouncementsChannel.replace(/^<#/, '').replace(/>$/, '');
+                                document.getElementById('memberAnnouncementsChannelId').value = announcementsId;
+                            }
+                            if (verifyConfig.memberResourcesChannel) {
+                                const resourcesId = verifyConfig.memberResourcesChannel.replace(/^<#/, '').replace(/>$/, '');
+                                document.getElementById('memberResourcesChannelId').value = resourcesId;
+                            }
+                        }
                         
                         if (config.bot.commandDescriptions) {
                             document.getElementById('whoamiCommandDesc').value = config.bot.commandDescriptions.whoami || '';
@@ -940,6 +1126,135 @@
             URL.revokeObjectURL(url);
             
             showAlert(`CSV file "${fileName}" downloaded successfully!`, 'success');
+        }
+
+        // New functions for importing bot-config.json
+        function handleConfigDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.name.endsWith('.json')) {
+                    processConfigFile(file);
+                } else {
+                    showAlert('Please upload a valid bot-config.json file', 'error');
+                }
+            }
+        }
+
+        function handleConfigUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                processConfigFile(file);
+            }
+        }
+
+        let uploadedConfigFile = null;
+
+        function processConfigFile(file) {
+            uploadedConfigFile = file;
+            
+            // Show file info
+            const fileInfo = document.getElementById('config-file-info');
+            const fileSize = (file.size / 1024).toFixed(2);
+            fileInfo.innerHTML = `
+                <strong>File:</strong> ${file.name}<br>
+                <strong>Size:</strong> ${fileSize} KB<br>
+                <strong>Type:</strong> JSON Configuration
+            `;
+            fileInfo.style.display = 'block';
+            
+            // Show import button
+            document.getElementById('import-config-btn').style.display = 'inline-block';
+            
+            showAlert('Config file uploaded successfully! Click "Import Configuration" to load the settings.', 'success');
+        }
+
+        function importConfig() {
+            if (!uploadedConfigFile) {
+                showAlert('Please upload a bot-config.json file first', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    if (config && typeof config === 'object') {
+                        // Populate the form fields from the imported config
+                        document.getElementById('botName').value = config.botName || 'Discord Bot';
+                        document.getElementById('organizationName').value = config.organizationName || 'Your Club';
+                        document.getElementById('botColor').value = config.botColor || '#00aeef';
+                        document.getElementById('botActivityMessage').value = config.botActivityMessage || 'your community 👀';
+                        document.getElementById('botActivityType').value = config.botActivityType || 'Watching';
+                        document.getElementById('whoamiDescription').value = config.whoamiDescription || 'A customisable Discord bot for your community.';
+                        document.getElementById('footerText').value = config.footerText || 'Discord Bot Generator';
+                        document.getElementById('verificationFooterText').value = config.verificationFooterText || 'Thank you for being a valued member! 💗';
+                        document.getElementById('memberAnnouncementsChannelId').value = config.memberAnnouncementsChannelId || '';
+                        document.getElementById('memberResourcesChannelId').value = config.memberResourcesChannelId || '';
+                        document.getElementById('joinButtonText').value = config.joinButtonText || '';
+                        document.getElementById('joinButtonUrl').value = config.joinButtonUrl || '';
+                        document.getElementById('socialsButtonText').value = config.socialsButtonText || '';
+                        document.getElementById('socialsButtonUrl').value = config.socialsButtonUrl || '';
+                        document.getElementById('githubButtonText').value = config.githubButtonText || '';
+                        document.getElementById('githubButtonUrl').value = config.githubButtonUrl || '';
+                        document.getElementById('verificationMessage').value = config.verificationMessage || 'You have been successfully verified!';
+                        
+                        // Populate new verification message fields
+                        if (config.commandOutputs && config.commandOutputs.verify) {
+                            const verifyConfig = config.commandOutputs.verify;
+                            document.getElementById('verifySuccessMessage').value = verifyConfig.successMessage || '';
+                            document.getElementById('verifySuccessDescription').value = verifyConfig.successDescription || '';
+                            document.getElementById('verifyAlreadyVerifiedMessage').value = verifyConfig.alreadyVerifiedMessage || '';
+                            
+                            if (verifyConfig.membershipExpirationNotice) {
+                                document.getElementById('expirationNoticeTitle').value = verifyConfig.membershipExpirationNotice.title || '';
+                                document.getElementById('expirationNoticeDescription').value = verifyConfig.membershipExpirationNotice.description || '';
+                                document.getElementById('expirationNoticeFooter').value = verifyConfig.membershipExpirationNotice.footer || '';
+                            }
+                            
+                            // Load channel IDs (extract just the ID from <#ID> format)
+                            if (verifyConfig.memberAnnouncementsChannel) {
+                                const announcementsId = verifyConfig.memberAnnouncementsChannel.replace(/^<#/, '').replace(/>$/, '');
+                                document.getElementById('memberAnnouncementsChannelId').value = announcementsId;
+                            }
+                            if (verifyConfig.memberResourcesChannel) {
+                                const resourcesId = verifyConfig.memberResourcesChannel.replace(/^<#/, '').replace(/>$/, '');
+                                document.getElementById('memberResourcesChannelId').value = resourcesId;
+                            }
+                        }
+                        
+                        if (config.commandDescriptions) {
+                            document.getElementById('whoamiCommandDesc').value = config.commandDescriptions.whoami || '';
+                            document.getElementById('pingCommandDesc').value = config.commandDescriptions.ping || '';
+                            document.getElementById('commandsCommandDesc').value = config.commandDescriptions.commands || '';
+                            document.getElementById('eightballCommandDesc').value = config.commandDescriptions.eightball || '';
+                            document.getElementById('catCommandDesc').value = config.commandDescriptions.cat || '';
+                            document.getElementById('flipCommandDesc').value = config.commandDescriptions.flip || '';
+                            document.getElementById('verifyCommandDesc').value = config.commandDescriptions.verify || '';
+                            document.getElementById('calendarCommandDesc').value = config.commandDescriptions.calendar || '';
+                        }
+                        
+                        // Save to localStorage for persistence
+                        saveToLocalStorage();
+                        
+                        showAlert('Configuration imported successfully! All form fields have been updated. Switch to "Bot Customisation" tab to see the imported values.', 'success');
+                        
+                        // Switch to the Bot Customisation tab to show the imported values
+                        showTab('bot');
+                        
+                    } else {
+                        showAlert('The uploaded file does not contain a valid bot configuration.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error processing config file:', error);
+                    showAlert('Error processing the config file. Please ensure it\'s a valid JSON file.', 'error');
+                }
+            };
+            
+            reader.readAsText(uploadedConfigFile);
         }
     </script>
 </body>

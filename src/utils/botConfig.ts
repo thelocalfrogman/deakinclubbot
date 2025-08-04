@@ -23,10 +23,18 @@ export interface BotConfig {
     
     // General bot settings
     botName: string;
+    organizationName: string;
     botColor: string;
+    botActivityMessage: string;
+    botActivityType: string;
     
     // Verification messages
     verificationMessage: string;
+    verificationFooterText: string;
+    
+    // Channel configuration
+    memberAnnouncementsChannelId?: string;
+    memberResourcesChannelId?: string;
     
     // Command descriptions (customizable)
     commandDescriptions: {
@@ -82,7 +90,13 @@ export interface BotConfig {
             title: string;
             errorMessage: string;
             successMessage: string;
+            successDescription: string;
             alreadyVerifiedMessage: string;
+            membershipExpirationNotice: {
+                title: string;
+                description: string;
+                footer: string;
+            };
             memberAnnouncementsChannel: string;
             memberResourcesChannel: string;
         };
@@ -102,8 +116,14 @@ const defaultConfig: BotConfig = {
     whoamiDescription: "A customizable Discord bot for your community.",
     footerText: "Discord Bot Generator",
     botName: "Discord Bot",
+    organizationName: "Your Club",
     botColor: "#00aeef",
+    botActivityMessage: "your community 👀",
+    botActivityType: "Watching",
     verificationMessage: "You have been successfully verified!",
+    verificationFooterText: "Thank you for being a valued member! 💗",
+    memberAnnouncementsChannelId: "",
+    memberResourcesChannelId: "",
     commandDescriptions: {
         whoami: "Display bot information",
         ping: "Display latency and response time",
@@ -152,10 +172,16 @@ const defaultConfig: BotConfig = {
         verify: {
             title: "$ verify",
             errorMessage: "We're sorry — an unexpected error occurred.\n Please try again later or contact an administrator if the issue persists.",
-            successMessage: "**You have been successfully verified!**",
-            alreadyVerifiedMessage: "You are already verified — no further action needed!",
-            memberAnnouncementsChannel: "<#1347067213160644659>",
-            memberResourcesChannel: "<#1344439191110422588>"
+            successMessage: "**You have been granted {roleName}!**",
+            successDescription: "Explore {memberAnnouncementsChannel} and {memberResourcesChannel} for exclusive member content.",
+            alreadyVerifiedMessage: "You are already a **{roleName}** — no further action needed!",
+            membershipExpirationNotice: {
+                title: "🔔 Membership Expiration Notice",
+                description: "Hi {fullName},\n\nThis is a friendly reminder that your membership expires **today**.\n\n**As of next Friday, you will no longer have the @Member role** and will need to re-verify.\n\nTo maintain your membership benefits, please renew your membership and run the `/verify` command again next Friday evening.\n\nThank you for being a valued {club} member! 💗",
+                footer: "Your Club Membership System"
+            },
+            memberAnnouncementsChannel: "",
+            memberResourcesChannel: ""
         },
         calendar: {
             title: "$ calendar",
@@ -185,7 +211,17 @@ export async function getBotConfig(): Promise<BotConfig> {
         const config = JSON.parse(configData);
         
         // Merge with defaults to ensure all properties exist
-        return { ...defaultConfig, ...config };
+        const mergedConfig = { ...defaultConfig, ...config };
+        
+        // Format channel IDs from form values if they exist
+        if (mergedConfig.memberAnnouncementsChannelId) {
+            mergedConfig.commandOutputs.verify.memberAnnouncementsChannel = `<#${mergedConfig.memberAnnouncementsChannelId}>`;
+        }
+        if (mergedConfig.memberResourcesChannelId) {
+            mergedConfig.commandOutputs.verify.memberResourcesChannel = `<#${mergedConfig.memberResourcesChannelId}>`;
+        }
+        
+        return mergedConfig;
     } catch (error) {
         // If file doesn't exist or is invalid, create with defaults
         await saveBotConfig(defaultConfig);

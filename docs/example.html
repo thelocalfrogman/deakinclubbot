@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DUCA Bot Configuration Example</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 40px; color: white; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 1.2rem; opacity: 0.9; }
+        .content { background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; }
+        .example-notice { background: #e8f5e8; border: 2px solid #4caf50; border-radius: 8px; padding: 20px; margin: 30px; text-align: center; }
+        .example-notice h3 { color: #2e7d32; margin-bottom: 10px; }
+        .example-notice p { color: #388e3c; margin-bottom: 15px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; margin-right: 10px; margin-bottom: 10px; margin-top: 10px; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-primary:hover { background: #0056b3; transform: translateY(-1px); }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #545b62; transform: translateY(-1px); }
+        .tab-content { padding: 30px; }
+        .section { margin-bottom: 30px; }
+        .section h3 { color: #495057; margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid #e9ecef; padding-bottom: 10px; }
+        .form-group { margin-bottom: 20px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; color: #495057; }
+        input, textarea { width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem; transition: border-color 0.3s ease; }
+        input:focus, textarea:focus { outline: none; border-color: #007bff; }
+        textarea { resize: vertical; min-height: 80px; }
+        .help-text { font-size: 0.9rem; color: #6c757d; margin-top: 5px; }
+        .footer { margin-top: 40px; padding: 20px 0; text-align: center; color: white; }
+        .footer p { margin: 0; font-size: 1rem; opacity: 0.9; }
+        .footer a { color: white; text-decoration: none; font-weight: 500; transition: opacity 0.3s ease; }
+        .footer a:hover { opacity: 0.8; text-decoration: underline; }
+        @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } .header h1 { font-size: 2rem; } .tab-content { padding: 20px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 DUCA Bot Configuration Example</h1>
+            <p>See how the Deakin University Cybersecurity Association (DUCA) would configure their Discord bot</p>
+        </div>
+
+        <div class="content">
+            <div class="example-notice">
+                <h3>🎯 This is an Example Configuration</h3>
+                <p>This page shows how DUCA (Deakin University Cybersecurity Association) would fill out their bot configuration. Use this as inspiration for your own club's setup!</p>
+                <a href="index.html" class="btn btn-primary">← Back to Configuration Generator</a>
+                <button class="btn btn-secondary" onclick="copyExampleConfig()">📋 Copy This Configuration</button>
+            </div>
+
+            <div class="tab-content">
+                <div class="section">
+                    <h3>General Bot Settings</h3>
+                    <div class="form-group">
+                        <label>Bot Name</label>
+                        <input type="text" value="DUCA Bot" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Organization/Club Name</label>
+                        <input type="text" value="DUCA" readonly>
+                        <div class="help-text">Used in member messages and general references to your organization</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Bot Color (Hex)</label>
+                        <input type="color" value="#00aeef" readonly>
+                        <div class="help-text">This color will be used for embeds and UI elements</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Bot Status & Activity</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Bot Activity Message</label>
+                            <input type="text" value="DUCA 👀" readonly>
+                            <div class="help-text">The message shown in the bot's status (e.g., "Watching DUCA 👀")</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Activity Type</label>
+                            <select readonly>
+                                <option>Watching</option>
+                            </select>
+                            <div class="help-text">The type of activity shown in the bot's status</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Whoami Command Customisation</h3>
+                    <div class="form-group">
+                        <label>Bot Description</label>
+                        <textarea readonly>Welcome to the DUCA Discord server! I'm your friendly bot assistant, here to help with membership verification, event updates, and community management. I can help you verify your DUCA membership, check upcoming events, and access member-only resources.</textarea>
+                        <div class="help-text">Description shown in the /whoami command</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Footer Text</label>
+                        <input type="text" value="DUCA Discord Bot - Powering Our Community" readonly>
+                        <div class="help-text">Text displayed in the footer of bot messages</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Command Descriptions</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Whoami Command Description</label>
+                            <input type="text" value="Display DUCA bot information and features" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Ping Command Description</label>
+                            <input type="text" value="Check bot latency and response time" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Commands Command Description</label>
+                            <input type="text" value="View all available DUCA bot commands" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>8ball Command Description</label>
+                            <input type="text" value="Ask the magic 8-ball a question about your cybersecurity career" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Cat Command Description</label>
+                            <input type="text" value="Display a random cat HTTP status code (for debugging fun!)" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Flip Command Description</label>
+                            <input type="text" value="Flip a coin to make those tough tech decisions" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Verify Command Description</label>
+                            <input type="text" value="Verify your DUCA membership and get the @Member role" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Calendar Command Description</label>
+                            <input type="text" value="View upcoming DUCA events and workshops" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Button Configuration</h3>
+                    <div class="help-text" style="margin-bottom: 15px;">These buttons appear in the /whoami command to link to external sites</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Join Button Text</label>
+                            <input type="text" value="Join DUCA" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Join Button URL</label>
+                            <input type="url" value="https://duca.au/join" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Socials Button Text</label>
+                            <input type="text" value="Follow @DUCAau" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Socials Button URL</label>
+                            <input type="url" value="https://twitter.com/DUCAau" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>GitHub Button Text</label>
+                            <input type="text" value="View Source Code" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>GitHub Button URL</label>
+                            <input type="url" value="https://github.com/duca-club/deakin-club-bot" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Messages</h3>
+                    <div class="form-group">
+                        <label>General Verification Message</label>
+                        <textarea readonly>Welcome to DUCA! Your membership has been successfully verified. You now have access to member-only channels and resources.</textarea>
+                        <div class="help-text">General verification success message</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Verification Success Message</label>
+                        <input type="text" value="**You have been granted {roleName}!**" readonly>
+                        <div class="help-text">Use {roleName} placeholder - automatically populated</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Success Description</label>
+                        <textarea readonly>Welcome to DUCA! Check out 1347067213160644659 for important updates and #member-resources for exclusive study guides and programming tutorials.</textarea>
+                        <div class="help-text">Example shows placeholder text - these become clickable channel links like <strong>#member-announcements</strong> when configured with proper Discord channel IDs</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Already Verified Message</label>
+                        <input type="text" value="You are already a **{roleName}** — enjoy your DUCA membership benefits!" readonly>
+                        <div class="help-text">Message shown when user is already verified</div>
+                    </div>
+                    
+                    <h4 style="margin-top: 30px; margin-bottom: 15px; color: #495057;">Membership Expiration Notice</h4>
+                    <div class="form-group">
+                        <label>Expiration Notice Title</label>
+                        <input type="text" value="🔔 DUCA Membership Expiration Notice" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Expiration Notice Message</label>
+                        <textarea readonly style="min-height: 120px;">Hi {fullName},
+
+This is a friendly reminder that your DUCA membership expires **today**.
+
+**As of next Friday, you will no longer have the @Member role** and will lose access to member-only channels.
+
+To maintain your membership benefits, please renew your membership and run the `/verify` command again next Friday evening.
+
+Thank you for being a valued member of the Deakin University Cybersecurity Association! 💙🖥️</textarea>
+                        <div class="help-text">Use {fullName} for user's name, {club} for organization name</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Expiration Notice Footer</label>
+                        <input type="text" value="DUCA Membership System" readonly>
+                    </div>
+                    
+                    <h4 style="margin-top: 30px; margin-bottom: 15px; color: #495057;">General Verification Messages</h4>
+                    <div class="form-group">
+                        <label>Verification Footer Text</label>
+                        <input type="text" value="Thank you for being a valued DUCA member! 💗" readonly>
+                        <div class="help-text">Shown at the bottom of verification success and info messages</div>
+                    </div>
+                    
+                    <h4 style="margin-top: 30px; margin-bottom: 15px; color: #495057;">Channel Configuration</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Member Announcements Channel ID</label>
+                            <input type="text" value="1347067213160644659" readonly>
+                            <div class="help-text">DUCA's #member-announcements channel ID</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Member Resources Channel ID</label>
+                            <input type="text" value="1344439191110422588" readonly>
+                            <div class="help-text">DUCA's #member-resources channel ID</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Made with ♥️ by <a href="https://duca.au" target="_blank">DUCA</a> | <a href="index.html">← Back to Generator</a></p>
+        </div>
+    </footer>
+
+    <script>
+        function copyExampleConfig() {
+            // Create the full DUCA example configuration
+            const ducaConfig = {
+                "botName": "DUCA Bot",
+                "organizationName": "DUCA",
+                "botColor": "#00aeef",
+                "botActivityMessage": "DUCA 👀",
+                "botActivityType": "Watching",
+                "whoamiDescription": "Welcome to the DUCA Discord server! I'm your friendly bot assistant, here to help with membership verification, event updates, and community management. I can help you verify your DUCA membership, check upcoming events, and access member-only resources.",
+                "footerText": "DUCA Discord Bot - Powering Our Community",
+                "verificationFooterText": "Thank you for being a valued DUCA member! 💗",
+                "joinButtonText": "Join DUCA",
+                "joinButtonUrl": "https://duca.au/join",
+                "socialsButtonText": "Follow @DUCAau",
+                "socialsButtonUrl": "https://twitter.com/DUCAau",
+                "githubButtonText": "View Source Code",
+                "githubButtonUrl": "https://github.com/duca-club/deakin-club-bot",
+                "verificationMessage": "Welcome to DUCA! Your membership has been successfully verified. You now have access to member-only channels and resources.",
+                "memberAnnouncementsChannelId": "1347067213160644659",
+                "memberResourcesChannelId": "1344439191110422588",
+                "commandDescriptions": {
+                    "whoami": "Display DUCA bot information and features",
+                    "ping": "Check bot latency and response time",
+                    "commands": "View all available DUCA bot commands",
+                    "eightball": "Ask the magic 8-ball a question about your cybersecurity career",
+                    "cat": "Display a random cat HTTP status code (for debugging fun!)",
+                    "flip": "Flip a coin to make those tough tech decisions",
+                    "verify": "Verify your DUCA membership and get the @Member role",
+                    "calendar": "View upcoming DUCA events and workshops"
+                },
+                "commandTitles": {
+                    "commands": "$ commands",
+                    "commandsDescription": "**Commands Manual**\nBelow is a complete list of all slash commands separated by category:",
+                    "eightball": "$ 8-ball",
+                    "cat": "$ cat",
+                    "flip": "$ flip",
+                    "verify": "$ verify",
+                    "calendar": "$ calendar"
+                },
+                "commandOutputs": {
+                    "commands": {
+                        "entertainmentTitle": "Fun",
+                        "entertainmentCommands": "`8ball` `cat` `flip`",
+                        "utilityTitle": "Utility",
+                        "utilityCommands": "`calendar` `ping` `verify`",
+                        "miscTitle": "Extra",
+                        "miscCommands": "`commands` `whoami`"
+                    },
+                    "ping": {
+                        "title": "$ ping",
+                        "format": "\\> latency :: **{latency}ms**"
+                    },
+                    "eightball": {
+                        "title": "$ 8-ball",
+                        "errorMessage": "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists."
+                    },
+                    "cat": {
+                        "title": "$ cat",
+                        "errorMessage": "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists."
+                    },
+                    "flip": {
+                        "title": "$ flip",
+                        "format": "\\> output :: **{result}**",
+                        "errorMessage": "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists."
+                    },
+                    "verify": {
+                        "title": "$ verify",
+                        "errorMessage": "We're sorry — an unexpected error occurred.\n Please try again later or contact an administrator if the issue persists.",
+                        "successMessage": "**You have been granted {roleName}!**",
+                        "successDescription": "Welcome to DUCA! Check out #member-announcements for important updates and #member-resources for exclusive study guides and programming tutorials.",
+                        "alreadyVerifiedMessage": "You are already a **{roleName}** — enjoy your DUCA membership benefits!",
+                        "membershipExpirationNotice": {
+                            "title": "🔔 DUCA Membership Expiration Notice",
+                            "description": "Hi {fullName},\n\nThis is a friendly reminder that your DUCA membership expires **today**.\n\n**As of next Friday, you will no longer have the @Member role** and will lose access to member-only channels.\n\nTo maintain your membership benefits, please renew your membership and run the `/verify` command again next Friday evening.\n\nThank you for being a valued member of the Deakin University Cybersecurity Association! 💙🖥️",
+                            "footer": "DUCA Membership System"
+                        },
+                                                 "memberAnnouncementsChannel": "<#1347067213160644659>",
+                         "memberResourcesChannel": "<#1344439191110422588>"
+                    },
+                    "calendar": {
+                        "title": "$ calendar",
+                        "noEventsMessage": "No upcoming events found matching those filters.\n Try adjusting your query or please try again later.",
+                        "errorMessage": "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
+                        "lastUpdatedText": "Last Updated"
+                    }
+                }
+            };
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(JSON.stringify(ducaConfig, null, 2)).then(() => {
+                alert('✅ DUCA configuration copied to clipboard!\n\nYou can paste this into the configuration generator or save it as bot-config.json');
+            }).catch(err => {
+                console.error('Failed to copy to clipboard:', err);
+                // Fallback: open in new window for manual copy
+                const newWindow = window.open('', '_blank');
+                newWindow.document.write('<pre>' + JSON.stringify(ducaConfig, null, 2) + '</pre>');
+                newWindow.document.title = 'DUCA Bot Configuration - Copy this JSON';
+                alert('Configuration opened in new window for manual copying.');
+            });
+        }
+    </script>
+</body>
+</html> 
