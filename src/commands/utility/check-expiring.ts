@@ -57,7 +57,22 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
 
         // Send DM notifications to each expiring member
         let successCount = 0;
+        let invalidIdCount = 0;
+        
         for (const member of expiringMembers) {
+            // Validate discord_id before attempting to fetch user
+            if (!member.discord_id || 
+                member.discord_id === 'null' || 
+                member.discord_id === null || 
+                typeof member.discord_id !== 'string' ||
+                member.discord_id.length < 17 || 
+                member.discord_id.length > 20) {
+                
+                logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: "${member.discord_id}"`, "error", username);
+                invalidIdCount++;
+                continue;
+            }
+
             try {
                 const user = await client.users.fetch(member.discord_id);
                 
@@ -82,12 +97,16 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
                 logger(`[/check-expiring] Sent notification to ${member.discord_username}`, "info", username);
 
             } catch (dmError) {
-                logger(`[/check-expiring] Failed to send DM to ${member.discord_username}: ${String(dmError)}`, "error", username);
+                logger(`[/check-expiring] Failed to send DM to ${member.discord_username} (ID: ${member.discord_id}): ${String(dmError)}`, "error", username);
             }
         }
 
-        logger(`[/check-expiring] Processed ${expiringMembers.length} expiring memberships, ${successCount} notifications sent`, "info", username);
-        return safeReply(interaction, createSuccessEmbed(expiringMembers.length, successCount));
+        const message = invalidIdCount > 0 
+            ? `Processed ${expiringMembers.length} expiring memberships, ${successCount} notifications sent, ${invalidIdCount} invalid discord IDs found`
+            : `Processed ${expiringMembers.length} expiring memberships, ${successCount} notifications sent`;
+            
+        logger(`[/check-expiring] ${message}`, "info", username);
+        return safeReply(interaction, createSuccessEmbed(expiringMembers.length, successCount, invalidIdCount));
 
     } catch (error) {
         logger("[/check-expiring] " + String(error), "error", interaction.user.username);
@@ -109,13 +128,14 @@ function createErrorEmbed(message: string): EmbedBuilder {
 /**
  * Success embed.
  */
-function createSuccessEmbed(totalFound: number, successCount: number): EmbedBuilder {
+function createSuccessEmbed(totalFound: number, successCount: number, invalidIdCount: number): EmbedBuilder {
     return new EmbedBuilder()
         .setTitle("✅ Check Expiring Memberships")
         .setDescription(
             `**Found:** ${totalFound} expiring membership(s)\n` +
             `**Notifications sent:** ${successCount}\n` +
-            `**Failed:** ${totalFound - successCount}`
+            `**Failed:** ${totalFound - successCount}\n` +
+            `**Invalid Discord IDs:** ${invalidIdCount}`
         )
         .setColor(0x33cc33)
         .setFooter({ text: "Admin Command" });

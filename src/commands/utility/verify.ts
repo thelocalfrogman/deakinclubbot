@@ -44,6 +44,9 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         const userId = interaction.user.id;
         const username = interaction.user.username;
 
+        // Debug logging for discord_id
+        logger(`[/verify] Processing verification - Discord ID: "${userId}", Username: "${username}", Email: "${email}"`, "info", username);
+
         // — Supabase Check —
         if (!isSupabaseAvailable()) {
             throw new Error("Supabase disabled. Enable Supabase to restore functionality");
@@ -122,14 +125,19 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         }
 
         // Upsert handles both insert and update to prevent duplicates
-        const { error: upsertError } = await supabase.from("verified_members").upsert({
+        const memberData = {
             discord_id: userId,
             email,
             full_name: fullName,
             end_date: endDate,
             discord_username: username,
             verified_at: new Date().toISOString(),
-        });
+        };
+        
+        // Debug logging before database upsert
+        logger(`[/verify] Storing member data: ${JSON.stringify(memberData)}`, "info", username);
+        
+        const { error: upsertError } = await supabase.from("verified_members").upsert(memberData);
 
         if (upsertError) {
             // Revert role assignment on failure to keep state consistent

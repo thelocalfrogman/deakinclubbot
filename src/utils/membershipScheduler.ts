@@ -86,6 +86,18 @@ export class MembershipScheduler {
 
             // Send DM notifications to each expiring member
             for (const member of expiringMembers) {
+                // Validate discord_id before attempting to send notification
+                if (!member.discord_id || 
+                    member.discord_id === 'null' || 
+                    member.discord_id === null || 
+                    typeof member.discord_id !== 'string' ||
+                    member.discord_id.length < 17 || 
+                    member.discord_id.length > 20) {
+                    
+                    logger(`[MembershipScheduler] Invalid discord_id for ${member.discord_username}: "${member.discord_id}"`, "error");
+                    continue;
+                }
+
                 await this.sendExpirationNotification(member.discord_id, member.discord_username, member.full_name);
             }
 
