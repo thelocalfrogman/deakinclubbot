@@ -60,15 +60,48 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         let invalidIdCount = 0;
         
         for (const member of expiringMembers) {
+            // Debug logging for discord_id validation
+            logger(`[/check-expiring] Checking member: ${member.discord_username}, discord_id: "${member.discord_id}", type: ${typeof member.discord_id}, length: ${member.discord_id?.length}`, "info", username);
+            
             // Validate discord_id before attempting to fetch user
-            if (!member.discord_id || 
-                member.discord_id === 'null' || 
-                member.discord_id === null || 
-                typeof member.discord_id !== 'string' ||
-                member.discord_id.length < 17 || 
-                member.discord_id.length > 20) {
-                
-                logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: "${member.discord_id}"`, "error", username);
+            if (!member.discord_id) {
+                logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: discord_id is falsy`, "error", username);
+                invalidIdCount++;
+                continue;
+            }
+            
+            if (member.discord_id === 'null') {
+                logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: discord_id is string "null"`, "error", username);
+                invalidIdCount++;
+                continue;
+            }
+            
+            if (member.discord_id === null) {
+                logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: discord_id is null`, "error", username);
+                invalidIdCount++;
+                continue;
+            }
+            
+            if (typeof member.discord_id !== 'string') {
+                // Try to convert to string if it's a number
+                if (typeof member.discord_id === 'number' || typeof member.discord_id === 'bigint') {
+                    member.discord_id = String(member.discord_id);
+                    logger(`[/check-expiring] Converted discord_id to string for ${member.discord_username}: "${member.discord_id}"`, "info", username);
+                } else {
+                    logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: discord_id is not string, type: ${typeof member.discord_id}`, "error", username);
+                    invalidIdCount++;
+                    continue;
+                }
+            }
+            
+            if (member.discord_id.length < 17) {
+                logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: discord_id too short, length: ${member.discord_id.length}`, "error", username);
+                invalidIdCount++;
+                continue;
+            }
+            
+            if (member.discord_id.length > 20) {
+                logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: discord_id too long, length: ${member.discord_id.length}`, "error", username);
                 invalidIdCount++;
                 continue;
             }

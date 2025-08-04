@@ -86,15 +86,43 @@ export class MembershipScheduler {
 
             // Send DM notifications to each expiring member
             for (const member of expiringMembers) {
+                // Debug logging for discord_id validation
+                logger(`[MembershipScheduler] Checking member: ${member.discord_username}, discord_id: "${member.discord_id}", type: ${typeof member.discord_id}, length: ${member.discord_id?.length}`, "info");
+                
                 // Validate discord_id before attempting to send notification
-                if (!member.discord_id || 
-                    member.discord_id === 'null' || 
-                    member.discord_id === null || 
-                    typeof member.discord_id !== 'string' ||
-                    member.discord_id.length < 17 || 
-                    member.discord_id.length > 20) {
-                    
-                    logger(`[MembershipScheduler] Invalid discord_id for ${member.discord_username}: "${member.discord_id}"`, "error");
+                if (!member.discord_id) {
+                    logger(`[MembershipScheduler] Invalid discord_id for ${member.discord_username}: discord_id is falsy`, "error");
+                    continue;
+                }
+                
+                if (member.discord_id === 'null') {
+                    logger(`[MembershipScheduler] Invalid discord_id for ${member.discord_username}: discord_id is string "null"`, "error");
+                    continue;
+                }
+                
+                if (member.discord_id === null) {
+                    logger(`[MembershipScheduler] Invalid discord_id for ${member.discord_username}: discord_id is null`, "error");
+                    continue;
+                }
+                
+                if (typeof member.discord_id !== 'string') {
+                    // Try to convert to string if it's a number
+                    if (typeof member.discord_id === 'number' || typeof member.discord_id === 'bigint') {
+                        member.discord_id = String(member.discord_id);
+                        logger(`[MembershipScheduler] Converted discord_id to string for ${member.discord_username}: "${member.discord_id}"`, "info");
+                    } else {
+                        logger(`[MembershipScheduler] Invalid discord_id for ${member.discord_username}: discord_id is not string, type: ${typeof member.discord_id}`, "error");
+                        continue;
+                    }
+                }
+                
+                if (member.discord_id.length < 17) {
+                    logger(`[MembershipScheduler] Invalid discord_id for ${member.discord_username}: discord_id too short, length: ${member.discord_id.length}`, "error");
+                    continue;
+                }
+                
+                if (member.discord_id.length > 20) {
+                    logger(`[MembershipScheduler] Invalid discord_id for ${member.discord_username}: discord_id too long, length: ${member.discord_id.length}`, "error");
                     continue;
                 }
 
