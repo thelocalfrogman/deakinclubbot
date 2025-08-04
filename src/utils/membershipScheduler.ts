@@ -1,7 +1,6 @@
 import cron from "node-cron";
 import { Client, EmbedBuilder } from "discord.js";
 import { isSupabaseAvailable, getSupabaseClient } from "../lib/supabaseClient.js";
-import config from "../config/config.js";
 import logger from "./logger.js";
 
 /**

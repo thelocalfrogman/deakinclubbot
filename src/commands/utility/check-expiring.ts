@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, EmbedBuilder, MessageFlags, PermissionFlagsBits } from "discord.js";
+import { EmbedBuilder, MessageFlags, PermissionFlagsBits } from "discord.js";
 import type { CommandData, SlashCommandProps } from "commandkit";
 import { isSupabaseAvailable, getSupabaseClient } from "../../lib/supabaseClient.js";
 import logger from "../../utils/logger.js";
