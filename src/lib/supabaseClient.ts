@@ -5,7 +5,7 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
  * Represents a member who has been verified via Discord.
  */
 interface VerifiedMember {
-    discord_id: number;
+    discord_id: string; // Changed from number to string to handle bigint precision
     email: string;
     full_name: string;
     discord_username: string;
