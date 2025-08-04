@@ -46,6 +46,7 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
 
         // Debug logging for discord_id
         logger(`[/verify] Processing verification - Discord ID: "${userId}", Username: "${username}", Email: "${email}"`, "info", username);
+        logger(`[/verify] userId type: ${typeof userId}, value: "${userId}", length: ${userId.length}`, "info", username);
 
         // — Supabase Check —
         if (!isSupabaseAvailable()) {
@@ -77,7 +78,7 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         const { data: existing, error: fetchError } = await supabase
             .from("verified_members")
             .select("discord_id")
-            .eq("discord_id", userId)
+            .eq("discord_id", String(userId)) // Use string format for consistency
             .maybeSingle();
 
         if (fetchError) throw fetchError;
@@ -126,7 +127,7 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
 
         // Upsert handles both insert and update to prevent duplicates
         const memberData = {
-            discord_id: userId,
+            discord_id: String(userId), // Explicitly ensure it's stored as string to prevent bigint precision loss
             email,
             full_name: fullName,
             end_date: endDate,
@@ -136,6 +137,7 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         
         // Debug logging before database upsert
         logger(`[/verify] Storing member data: ${JSON.stringify(memberData)}`, "info", username);
+        logger(`[/verify] discord_id being stored - type: ${typeof memberData.discord_id}, value: "${memberData.discord_id}"`, "info", username);
         
         const { error: upsertError } = await supabase.from("verified_members").upsert(memberData);
 

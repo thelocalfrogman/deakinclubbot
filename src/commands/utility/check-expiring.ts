@@ -40,10 +40,9 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         const today = getTodayInDDMMYY();
 
         // Query verified_members for users whose membership expires today
+        // Use RPC function to get discord_id as text to prevent precision loss
         const { data: expiringMembers, error } = await supabase
-            .from("verified_members")
-            .select("discord_id, discord_username, full_name, end_date")
-            .eq("end_date", today);
+            .rpc('get_expiring_members', { expire_date: today });
 
         if (error) {
             logger("[/check-expiring] Database error: " + String(error), "error", username);
@@ -57,55 +56,9 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
 
         // Send DM notifications to each expiring member
         let successCount = 0;
-        let invalidIdCount = 0;
+        let failureCount = 0;
         
         for (const member of expiringMembers) {
-            // Debug logging for discord_id validation
-            logger(`[/check-expiring] Checking member: ${member.discord_username}, discord_id: "${member.discord_id}", type: ${typeof member.discord_id}, length: ${member.discord_id?.length}`, "info", username);
-            
-            // Validate discord_id before attempting to fetch user
-            if (!member.discord_id) {
-                logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: discord_id is falsy`, "error", username);
-                invalidIdCount++;
-                continue;
-            }
-            
-            if (member.discord_id === 'null') {
-                logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: discord_id is string "null"`, "error", username);
-                invalidIdCount++;
-                continue;
-            }
-            
-            if (member.discord_id === null) {
-                logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: discord_id is null`, "error", username);
-                invalidIdCount++;
-                continue;
-            }
-            
-            if (typeof member.discord_id !== 'string') {
-                // Try to convert to string if it's a number
-                if (typeof member.discord_id === 'number' || typeof member.discord_id === 'bigint') {
-                    member.discord_id = String(member.discord_id);
-                    logger(`[/check-expiring] Converted discord_id to string for ${member.discord_username}: "${member.discord_id}"`, "info", username);
-                } else {
-                    logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: discord_id is not string, type: ${typeof member.discord_id}`, "error", username);
-                    invalidIdCount++;
-                    continue;
-                }
-            }
-            
-            if (member.discord_id.length < 17) {
-                logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: discord_id too short, length: ${member.discord_id.length}`, "error", username);
-                invalidIdCount++;
-                continue;
-            }
-            
-            if (member.discord_id.length > 20) {
-                logger(`[/check-expiring] Invalid discord_id for ${member.discord_username}: discord_id too long, length: ${member.discord_id.length}`, "error", username);
-                invalidIdCount++;
-                continue;
-            }
-
             try {
                 const user = await client.users.fetch(member.discord_id);
                 
@@ -130,16 +83,13 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
                 logger(`[/check-expiring] Sent notification to ${member.discord_username}`, "info", username);
 
             } catch (dmError) {
-                logger(`[/check-expiring] Failed to send DM to ${member.discord_username} (ID: ${member.discord_id}): ${String(dmError)}`, "error", username);
+                failureCount++;
+                logger(`[/check-expiring] Failed to send DM to ${member.discord_username}: ${String(dmError)}`, "error", username);
             }
         }
 
-        const message = invalidIdCount > 0 
-            ? `Processed ${expiringMembers.length} expiring memberships, ${successCount} notifications sent, ${invalidIdCount} invalid discord IDs found`
-            : `Processed ${expiringMembers.length} expiring memberships, ${successCount} notifications sent`;
-            
-        logger(`[/check-expiring] ${message}`, "info", username);
-        return safeReply(interaction, createSuccessEmbed(expiringMembers.length, successCount, invalidIdCount));
+        logger(`[/check-expiring] Processed ${expiringMembers.length} expiring memberships, ${successCount} notifications sent, ${failureCount} failed`, "info", username);
+        return safeReply(interaction, createSuccessEmbed(expiringMembers.length, successCount, failureCount));
 
     } catch (error) {
         logger("[/check-expiring] " + String(error), "error", interaction.user.username);
@@ -161,14 +111,13 @@ function createErrorEmbed(message: string): EmbedBuilder {
 /**
  * Success embed.
  */
-function createSuccessEmbed(totalFound: number, successCount: number, invalidIdCount: number): EmbedBuilder {
+function createSuccessEmbed(totalFound: number, successCount: number, failureCount: number): EmbedBuilder {
     return new EmbedBuilder()
         .setTitle("✅ Check Expiring Memberships")
         .setDescription(
             `**Found:** ${totalFound} expiring membership(s)\n` +
             `**Notifications sent:** ${successCount}\n` +
-            `**Failed:** ${totalFound - successCount}\n` +
-            `**Invalid Discord IDs:** ${invalidIdCount}`
+            `**Failed:** ${failureCount}`
         )
         .setColor(0x33cc33)
         .setFooter({ text: "Admin Command" });
