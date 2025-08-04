@@ -2,6 +2,7 @@ import { EmbedBuilder, MessageFlags, PermissionFlagsBits } from "discord.js";
 import type { CommandData, SlashCommandProps } from "commandkit";
 import { isSupabaseAvailable, getSupabaseClient } from "../../lib/supabaseClient.js";
 import logger from "../../utils/logger.js";
+import { getTodayInDDMMYY } from "../../utils/dateUtils.js";
 
 /**
  * Slash command definition for check-expiring.
@@ -35,8 +36,8 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
             return safeReply(interaction, createErrorEmbed("Supabase client is not available"));
         }
 
-        // Get today's date in YYYY-MM-DD format
-        const today = new Date().toISOString().split('T')[0];
+        // Get today's date in DD/MM/YY format to match database format
+        const today = getTodayInDDMMYY();
 
         // Query verified_members for users whose membership expires today
         const { data: expiringMembers, error } = await supabase

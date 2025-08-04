@@ -2,6 +2,7 @@ import cron from "node-cron";
 import { Client, EmbedBuilder } from "discord.js";
 import { isSupabaseAvailable, getSupabaseClient } from "../lib/supabaseClient.js";
 import logger from "./logger.js";
+import { getTodayInDDMMYY } from "./dateUtils.js";
 
 /**
  * Schedules daily membership expiration checks at 9:00 AM.
@@ -61,8 +62,9 @@ export class MembershipScheduler {
                 return;
             }
 
-            // Get today's date in YYYY-MM-DD format
-            const today = new Date().toISOString().split('T')[0];
+            // Get today's date in DD/MM/YY format to match database format
+            const today = getTodayInDDMMYY();
+            logger(`[MembershipScheduler] Checking for memberships expiring on: ${today}`, "info");
 
             // Query verified_members for users whose membership expires today
             const { data: expiringMembers, error } = await supabase
