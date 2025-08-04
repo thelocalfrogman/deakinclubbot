@@ -1,17 +1,17 @@
-# Discord Bot Generator
+# Deakin Discord Bot Generator
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge)
 ![NodeJS](https://img.shields.io/badge/NodeJS-v22%2B-%235FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white&logoSize=auto)
 ![Prettier](https://img.shields.io/badge/Prettier-%23F7B93E?style=for-the-badge&logo=prettier&logoColor=black&logoSize=auto)
 
-A **user-friendly Discord bot generator** with easy customization and setup. Perfect for non-technical users who want to create a custom Discord bot for their community without writing code.
+A **user-friendly Discord bot generator** made specifically to help Deakin student-run clubs manage their server, with easy customisation and setup. Perfect for non-technical users who want to create a custom Discord bot for their community without writing code.
 
 ## ✨ Features
 
-- 🤖 **Customizable Discord Bot** - Fully configurable bot responses and behavior
+- 🤖 **Customisable Discord Bot** - Fully configurable bot responses and behavior
 - 🔧 **Environment Variable Management** - Easy setup of Discord tokens and API keys
-- 📝 **Command Customization** - Customize what your bot says for each command
-- 🎨 **Visual Customization** - Change colors, messages, and branding
+- 📝 **Command Customisation** - Customise what your bot says for each command
+- 🎨 **Visual Customisation** - Change colour, messages, and branding
 - 📊 **Member Verification** - Optional Supabase integration for member management
 - 📅 **Event Calendar** - Optional calendar functionality for community events
 - 🎮 **Fun Commands** - Built-in entertainment commands (8ball, cat, flip, etc.)
@@ -20,36 +20,17 @@ A **user-friendly Discord bot generator** with easy customization and setup. Per
 
 ### For Non-Technical Users
 
-1. **Download and Extract**
+Please follow this video guide:  
+**COMING SOON**
 
-    - Download the bot files
-    - Extract to a folder on your computer
-
-2. **Install Node.js**
-
-    - Download and install Node.js from [nodejs.org](https://nodejs.org/)
-    - Choose the LTS version
-
-3. **Generate Configuration Files**
-
-    - Visit our [Config Generator](https://yourusername.github.io/config-generator) to create your configuration files
-    - Download the generated `bot-config.json` and `.env` files
-    - Place them in your bot directory
-
-4. **Start Your Bot**
-    ```bash
-    npm install
-    npm run build
-    npm start
-    ```
 
 ### For Technical Users
 
 1. **Clone the repository**
 
     ```bash
-    git clone <repository-url>
-    cd discord-bot-generator
+    git clone https://github.com/duca-club/deakin-club-bot.git
+    cd deakin-club-bot
     ```
 
 2. **Install dependencies**
@@ -71,7 +52,7 @@ A **user-friendly Discord bot generator** with easy customization and setup. Per
     ```
 
 4. **Create bot configuration**
-   Create a `data/bot-config.json` file with your bot settings, or use our [Config Generator](https://yourusername.github.io/config-generator)
+   Create a `data/bot-config.json` file with your bot settings, or use our [Config Generator](https://duca-club.github.io/deakin-club-bot/)
 
 5. **Build and start the bot**
     ```bash
@@ -102,23 +83,23 @@ discord-bot-generator/
 
 ### Using the Config Generator
 
-We provide a standalone [Config Generator](https://yourusername.github.io/config-generator) that allows you to:
+We provide a standalone [Config Generator](https://duca-club.github.io/deakin-club-bot/) that allows you to:
 
-- **Customize Bot Settings**: Bot name, colors, branding, messages
-- **Configure Commands**: Customize descriptions and titles for all slash commands
+- **Customise Bot Settings**: Bot name, colors, branding, messages
+- **Configure Commands**: Customise descriptions and titles for all slash commands
 - **Set Up Buttons**: Configure external links for the `/whoami` command
 - **Manage Environment Variables**: Set up Discord tokens and server information
 - **Download Files**: Generate ready-to-use configuration files
 
 ### Manual Configuration
 
-All bot customization is stored in `data/bot-config.json` and can be edited manually.
+All bot customisation is stored in `data/bot-config.json` and can be edited manually.
 
 ## 🤖 Available Commands
 
 ### General Commands
 
-- `/whoami` - Display bot information (fully customizable)
+- `/whoami` - Display bot information (fully customisable)
 - `/ping` - Check bot latency
 - `/commands` - Show command help
 
@@ -133,29 +114,18 @@ All bot customization is stored in `data/bot-config.json` and can be edited manu
 - `/verify` - Member verification system
 - `/calendar` - Event calendar management
 
+**With more features always on the way!**
+
 ## 🌐 Deployment Options
-
-### Local Development
-
-```bash
-npm run dev          # Start bot in development mode
-```
-
-### Production Deployment
-
-```bash
-npm run build        # Build the project
-npm start            # Start the bot
-```
 
 ### Cloud Hosting
 
-The bot can be easily deployed to:
-
+You can expext to spend $5-$10/month however due to ease of deployment and maintenance, we recommend deploying the bot with:  
 - **Railway** - Simple deployment with automatic scaling
 - **Heroku** - Popular platform with free tier
 - **DigitalOcean** - VPS hosting with full control
-- **AWS/GCP** - Enterprise cloud solutions
+
+We do also provide instructions for freely hosting the bot using Deakin's GitLab resources, outlined in the instructional video [here]() (COMING SOON).
 
 ## 🔧 Configuration
 
@@ -172,7 +142,7 @@ The bot can be easily deployed to:
 
 ### Bot Configuration
 
-All bot customization is stored in `data/bot-config.json` and can be managed through our [Config Generator](https://yourusername.github.io/config-generator).
+All bot customisation is stored in `data/bot-config.json` and can be managed through our [Config Generator](https://duca-club.github.io/deakin-club-bot/).
 
 ## 🛠️ Development
 
@@ -180,15 +150,6 @@ All bot customization is stored in `data/bot-config.json` and can be managed thr
 
 - Node.js v22 or higher
 - npm or yarn package manager
-
-### Development Commands
-
-```bash
-npm install          # Install dependencies
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run format       # Format code with Prettier
-```
 
 ### Adding New Commands
 
@@ -199,25 +160,11 @@ npm run format       # Format code with Prettier
 ### Adding New Features
 
 1. Extend the `BotConfig` interface in `src/utils/botConfig.ts`
-2. Update the [Config Generator](https://yourusername.github.io/config-generator) to include new options
-
-## 📚 Documentation
-
-### For Users
-
-- [Getting Started Guide](docs/getting-started.md)
-- [Configuration Guide](docs/configuration.md)
-- [Deployment Guide](docs/deployment.md)
-
-### For Developers
-
-- [Command Development](docs/commands.md)
-- [API Reference](docs/api.md)
-- [Contributing Guidelines](CONTRIBUTING.md)
+2. Update the [Config Generator](https://duca-club.github.io/deakin-club-bot/) to include new options
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+We welcome contributions! Please see our [Contributing Guidelines](https://amazing-gouda-6a9.notion.site/Contribution-Guidelines-22f9d9519fee8166b305ec7dba04c03f) for details.
 
 ### Development Setup
 
@@ -227,10 +174,6 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 4. Add tests if applicable
 5. Submit a pull request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🙏 Acknowledgments
 
 - [discord.js](https://discord.js.org) - Powerful Discord API wrapper
@@ -239,4 +182,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Need help configuring your bot?** Use our [Config Generator](https://yourusername.github.io/config-generator) for an easy, no-setup configuration experience!
+**Need help configuring your bot?** Reach out to the programming team in the [DUCA Discord Server](https://discord.gg/4xNnxkSgUH)!

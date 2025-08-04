@@ -1,16 +1,21 @@
 {
-  "whoamiDescription": "THE DTS BOT!",
-  "footerText": "DTS Bot",
-  "botName": "DTS Bot",
+  "botName": "Discord Bot",
   "botColor": "#00aeef",
-  "welcomeMessage": "Welcome to DTS",
+  "whoamiDescription": "A customisable Discord bot for your community.",
+  "footerText": "Discord Bot Generator",
+  "joinButtonText": "",
+  "joinButtonUrl": "",
+  "socialsButtonText": "",
+  "socialsButtonUrl": "",
+  "githubButtonText": "",
+  "githubButtonUrl": "",
   "verificationMessage": "You have been successfully verified!",
   "commandDescriptions": {
-    "whoami": "Display bot information - DTS",
+    "whoami": "Display bot information",
     "ping": "Display latency and response time",
     "commands": "Display a list of all available commands",
     "eightball": "Ask the magic 8-ball a question",
-    "cat": "Display a random cat HTTP status code",
+    "cat": "Display a random cat image",
     "flip": "Flip a virtual coin!",
     "verify": "Verify your membership and redeem the @Member role",
     "calendar": "Display a list of upcoming events"
@@ -26,11 +31,11 @@
   },
   "commandOutputs": {
     "commands": {
-      "entertainmentTitle": "/usr/bin/lol",
+      "entertainmentTitle": "Fun",
       "entertainmentCommands": "`8ball` `cat` `flip`",
-      "utilityTitle": "/core/utils",
+      "utilityTitle": "Utility",
       "utilityCommands": "`calendar` `ping` `verify`",
-      "miscTitle": "/etc/extra",
+      "miscTitle": "Extra",
       "miscCommands": "`commands` `whoami`"
     },
     "ping": {
@@ -64,11 +69,5 @@
       "errorMessage": "We're sorry — an unexpected error occurred!\n Please try again later or contact an administrator if the issue persists.",
       "lastUpdatedText": "Last Updated"
     }
-  },
-  "joinButtonText": "Become a member",
-  "joinButtonUrl": "https://www.youtube.com/watch?v=E4WlUXrJgy4",
-  "socialsButtonText": "Our Socials",
-  "socialsButtonUrl": "https://www.youtube.com/watch?v=E4WlUXrJgy4",
-  "githubButtonText": "",
-  "githubButtonUrl": ""
+  }
 }

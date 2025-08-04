@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discord Bot Config Generator</title>
+    <!-- SheetJS library for Excel file processing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -157,6 +159,7 @@
             display: inline-block;
             margin-right: 10px;
             margin-bottom: 10px;
+            margin-top: 10px;
         }
 
         .btn-primary {
@@ -233,6 +236,63 @@
             overflow-y: auto;
         }
 
+        .file-upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 6px;
+            padding: 30px;
+            text-align: center;
+            margin: 15px 0;
+            transition: border-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            border-color: #007bff;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #007bff;
+            background-color: #f8f9fa;
+        }
+
+        .file-upload-input {
+            display: none;
+        }
+
+        .file-info {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding: 20px 0;
+            text-align: center;
+            color: white;
+        }
+
+        .footer p {
+            margin: 0;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -251,7 +311,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🤖 Discord Bot Config Generator</h1>
+            <h1>🤖 Deakin Bot Config Generator</h1>
             <p>Generate configuration files for your Discord bot without any setup</p>
         </div>
 
@@ -372,10 +432,10 @@
 
                 <div class="section">
                     <h3>Messages</h3>
-                    <div class="form-group">
+                    <!--<div class="form-group">
                         <label for="welcomeMessage">Welcome Message</label>
                         <textarea id="welcomeMessage" placeholder="Message to display when new members join">Welcome to our community!</textarea>
-                    </div>
+                    </div>-->
                     <div class="form-group">
                         <label for="verificationMessage">Verification Message</label>
                         <textarea id="verificationMessage" placeholder="Message to display when members are verified">You have been successfully verified!</textarea>
@@ -428,11 +488,6 @@
                         <input type="number" id="WEB_PORT" placeholder="3000" value="3000">
                         <div class="help-text">Port for the web configuration interface</div>
                     </div>
-                    <div class="form-group">
-                        <label for="WEB_SECRET">Web Secret Key <span class="optional">(Optional)</span></label>
-                        <input type="password" id="WEB_SECRET" placeholder="Change this to a secure random string">
-                        <div class="help-text">Secret key for web interface security</div>
-                    </div>
                 </div>
             </div>
 
@@ -457,10 +512,34 @@
                         <button class="btn btn-secondary" onclick="togglePreview('env')">Preview</button>
                         <div id="env-preview" class="file-preview" style="display: none;"></div>
                     </div>
+
+                    <div class="download-section">
+                        <h4>Excel to CSV Converter</h4>
+                        <p>Upload an Excel file (.xlsx, .xls) to convert it to CSV format with empty columns removed.</p>
+                        
+                        <div class="file-upload-area" onclick="document.getElementById('excelFile').click()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <input type="file" id="excelFile" class="file-upload-input" accept=".xlsx,.xls" onchange="handleExcelUpload(event)">
+                            <div id="upload-text">
+                                <strong>Click to select an Excel file</strong><br>
+                                or drag and drop it here<br>
+                                <small>Supported formats: .xlsx, .xls</small>
+                            </div>
+                        </div>
+                        
+                        <div id="file-info" class="file-info" style="display: none;"></div>
+                        
+                        <button class="btn btn-success" id="convert-btn" onclick="convertAndDownload()" style="display: none;">Convert & Download CSV</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Made with ♥️ by <a href="https://duca.au" target="_blank" rel="noopener noreferrer">DUCA</a></p>
+        </div>
+    </footer>
 
     <script>
         function showTab(tabName) {
@@ -493,7 +572,6 @@
                 socialsButtonUrl: document.getElementById('socialsButtonUrl').value || '',
                 githubButtonText: document.getElementById('githubButtonText').value || '',
                 githubButtonUrl: document.getElementById('githubButtonUrl').value || '',
-                welcomeMessage: document.getElementById('welcomeMessage').value || 'Welcome to our community!',
                 verificationMessage: document.getElementById('verificationMessage').value || 'You have been successfully verified!',
                 commandDescriptions: {
                     whoami: document.getElementById('whoamiCommandDesc').value || 'Display bot information',
@@ -567,7 +645,6 @@
                 SUPABASE_URL: document.getElementById('SUPABASE_URL').value || '',
                 SUPABASE_ANON_KEY: document.getElementById('SUPABASE_ANON_KEY').value || '',
                 WEB_PORT: document.getElementById('WEB_PORT').value || '3000',
-                WEB_SECRET: document.getElementById('WEB_SECRET').value || ''
             };
         }
 
@@ -666,7 +743,6 @@
                         document.getElementById('socialsButtonUrl').value = config.bot.socialsButtonUrl || '';
                         document.getElementById('githubButtonText').value = config.bot.githubButtonText || '';
                         document.getElementById('githubButtonUrl').value = config.bot.githubButtonUrl || '';
-                        document.getElementById('welcomeMessage').value = config.bot.welcomeMessage || '';
                         document.getElementById('verificationMessage').value = config.bot.verificationMessage || '';
                         
                         if (config.bot.commandDescriptions) {
@@ -690,7 +766,6 @@
                         document.getElementById('SUPABASE_URL').value = config.env.SUPABASE_URL || '';
                         document.getElementById('SUPABASE_ANON_KEY').value = config.env.SUPABASE_ANON_KEY || '';
                         document.getElementById('WEB_PORT').value = config.env.WEB_PORT || '3000';
-                        document.getElementById('WEB_SECRET').value = config.env.WEB_SECRET || '';
                     }
                 } catch (error) {
                     console.error('Error loading saved configuration:', error);
@@ -708,6 +783,164 @@
                 input.addEventListener('input', saveToLocalStorage);
             });
         });
+
+        // Excel to CSV conversion functions
+        let uploadedFile = null;
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                    processExcelFile(file);
+                } else {
+                    showAlert('Please upload a valid Excel file (.xlsx or .xls)', 'error');
+                }
+            }
+        }
+
+        function handleExcelUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                processExcelFile(file);
+            }
+        }
+
+        function processExcelFile(file) {
+            uploadedFile = file;
+            
+            // Show file info
+            const fileInfo = document.getElementById('file-info');
+            const fileSize = (file.size / 1024 / 1024).toFixed(2);
+            fileInfo.innerHTML = `
+                <strong>File:</strong> ${file.name}<br>
+                <strong>Size:</strong> ${fileSize} MB<br>
+                <strong>Type:</strong> ${file.type || 'Excel file'}
+            `;
+            fileInfo.style.display = 'block';
+            
+            // Show convert button
+            document.getElementById('convert-btn').style.display = 'inline-block';
+            
+            showAlert('Excel file uploaded successfully! Click "Convert & Download CSV" to process.', 'success');
+        }
+
+        function convertAndDownload() {
+            if (!uploadedFile) {
+                showAlert('Please upload an Excel file first', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    // Parse the Excel file
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Get the first worksheet
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // Convert to JSON to work with the data
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+                    
+                    if (jsonData.length === 0) {
+                        showAlert('The Excel file appears to be empty', 'error');
+                        return;
+                    }
+                    
+                    // Remove empty columns
+                    const cleanedData = removeEmptyColumns(jsonData);
+                    
+                    if (cleanedData.length === 0 || cleanedData[0].length === 0) {
+                        showAlert('No data found after removing empty columns', 'error');
+                        return;
+                    }
+                    
+                    // Convert to CSV
+                    const csvContent = arrayToCSV(cleanedData);
+                    
+                    // Download the CSV
+                    downloadCSV(csvContent, uploadedFile.name);
+                    
+                } catch (error) {
+                    console.error('Error processing Excel file:', error);
+                    showAlert('Error processing the Excel file. Please make sure it\'s a valid Excel file.', 'error');
+                }
+            };
+            
+            reader.readAsArrayBuffer(uploadedFile);
+        }
+
+        function removeEmptyColumns(data) {
+            if (data.length === 0) return data;
+            
+            const maxCols = Math.max(...data.map(row => row.length));
+            const columnsToKeep = [];
+            
+            // Check each column for non-empty values
+            for (let col = 0; col < maxCols; col++) {
+                let hasContent = false;
+                for (let row = 0; row < data.length; row++) {
+                    const cellValue = data[row][col];
+                    if (cellValue !== undefined && cellValue !== null && cellValue !== '') {
+                        hasContent = true;
+                        break;
+                    }
+                }
+                if (hasContent) {
+                    columnsToKeep.push(col);
+                }
+            }
+            
+            // Create new data with only non-empty columns
+            return data.map(row => columnsToKeep.map(col => row[col] || ''));
+        }
+
+        function arrayToCSV(data) {
+            return data.map(row => 
+                row.map(cell => {
+                    // Handle cells that contain commas, quotes, or newlines
+                    const cellStr = String(cell || '');
+                    if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
+                        return '"' + cellStr.replace(/"/g, '""') + '"';
+                    }
+                    return cellStr;
+                }).join(',')
+            ).join('\n');
+        }
+
+        function downloadCSV(csvContent, originalFileName) {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            
+            // Generate filename
+            const baseName = originalFileName.replace(/\.[^/.]+$/, '');
+            const fileName = `${baseName}_converted.csv`;
+            
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showAlert(`CSV file "${fileName}" downloaded successfully!`, 'success');
+        }
     </script>
 </body>
 </html> 

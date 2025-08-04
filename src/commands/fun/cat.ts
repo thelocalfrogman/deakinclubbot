@@ -4,17 +4,27 @@ import logger from "../../utils/logger.js";
 import { getBotConfig } from "../../utils/botConfig.js";
 
 /**
+ * Interface for cat API response
+ */
+interface CatApiResponse {
+    id: string;
+    url: string;
+    width: number;
+    height: number;
+}
+
+/**
  * Slash command definition for cat.
  * @type {CommandData}
  */
 export const data: CommandData = {
     name: "cat",
-    description: "Display a random cat HTTP status code",
+    description: "Display a random cat image",
 };
 
 /**
  * Main handler for the /cat command.
- * Selects a random HTTP status code, fetches the corresponding http.cat image, and replies with an embed.
+ * Fetches a random cat image from a cat API and replies with an embed.
  * @param {SlashCommandProps} props - The command properties provided by CommandKit.
  * @param {Client<true>} props.client - The Discord.js client instance.
  * @param {import("commandkit").CommandKit} props.handler - The CommandKit handler instance.
@@ -22,31 +32,36 @@ export const data: CommandData = {
  * @returns {Promise<void>} Resolves after editing the deferred reply.
  */
 export async function run({ interaction }: SlashCommandProps): Promise<void> {
+    let deferred = false;
+    
     try {
         // Defer to allow time for fetching image and building embed
         await interaction.deferReply();
+        deferred = true;
 
         // Get bot configuration
         const botConfig = await getBotConfig();
 
-        // — Define valid HTTP status codes for http.cat —
-        const validStatusCodes = [
-            100, 101, 102, 103, 200, 201, 202, 203, 204, 206, 207, 300, 301, 302, 303, 304, 305, 307, 308, 400, 401,
-            402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 420, 421, 422, 423,
-            424, 425, 426, 429, 431, 444, 450, 451, 497, 498, 499, 500, 501, 502, 503, 504, 506, 507, 508, 509, 510,
-            511, 521, 522, 523, 525, 599,
-        ];
+        // — Fetch a random cat image from the API —
+        const response = await fetch('https://api.thecatapi.com/v1/images/search?size=full');
+        
+        if (!response.ok) {
+            throw new Error(`API request failed with status: ${response.status}`);
+        }
 
-        // — Select a random status code —
-        let statusCode;
-        statusCode = validStatusCodes[Math.floor(Math.random() * validStatusCodes.length)];
+        const catData = await response.json() as CatApiResponse[];
+        
+        if (!catData || !Array.isArray(catData) || catData.length === 0 || !catData[0]?.url) {
+            throw new Error('Invalid response from cat API');
+        }
 
-        // — Build embed with the http.cat image and color based on code range —
+        const catImageUrl = catData[0].url;
+
+        // — Build embed with the cat image —
         const embed = new EmbedBuilder()
-            .setTitle(`${botConfig.commandOutputs?.cat?.title || "$ cat"} ${statusCode}`)
-            .setImage(`https://http.cat/${statusCode}`)
+            .setTitle(botConfig.commandOutputs?.cat?.title || "$ cat")
+            .setImage(catImageUrl)
             .setColor(parseInt(botConfig.botColor.replace('#', ''), 16))
-            .setFooter({ text: botConfig.footerText || "Discord Bot Generator" });
 
         await interaction.editReply({ embeds: [embed] });
         logger("[/cat]", "success", interaction.user.username);
@@ -62,7 +77,24 @@ export async function run({ interaction }: SlashCommandProps): Promise<void> {
             .setColor(0xff3333)
             .setFooter({ text: "exit status: 1" });
 
-        await interaction.editReply({ embeds: [errorEmbed] });
+        try {
+            if (deferred) {
+                await interaction.editReply({ embeds: [errorEmbed] });
+            } else {
+                await interaction.reply({ embeds: [errorEmbed] });
+            }
+        } catch (replyError) {
+            // If both editReply and reply fail, try to follow up
+            try {
+                await interaction.followUp({ 
+                    embeds: [errorEmbed],
+                    ephemeral: true 
+                });
+            } catch (followUpError) {
+                logger("[/cat] Failed to send error message: " + String(followUpError), "error", interaction.user.username);
+            }
+        }
+        
         logger("[/cat] " + String(error), "error", interaction.user.username);
     }
 }

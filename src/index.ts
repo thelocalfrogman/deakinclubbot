@@ -3,6 +3,7 @@ import { Client, IntentsBitField } from "discord.js";
 import { CommandKit } from "commandkit";
 import { dirname as dn } from "node:path";
 import { fileURLToPath } from "node:url";
+import MembershipScheduler from "./utils/membershipScheduler.js";
 
 const dirname = dn(fileURLToPath(import.meta.url));
 const { DISCORD_TOKEN, DEV_ROLE_ID, GUILD_ID } = config;
@@ -29,9 +30,15 @@ new CommandKit({
     bulkRegister: true,
 });
 
+// Initialize membership scheduler
+const membershipScheduler = new MembershipScheduler(client);
+
 // Client ready event
 client.once("ready", () => {
     console.log(`Bot is ready! Logged in as ${client.user?.tag}`);
+    
+    // Start the membership expiration scheduler
+    membershipScheduler.start();
 });
 
 client.login(DISCORD_TOKEN);

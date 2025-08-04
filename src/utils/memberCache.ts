@@ -2,7 +2,7 @@ import { isSupabaseAvailable, getSupabaseClient } from "../lib/supabaseClient.js
 import logger from "./logger.js";
 
 /**
- * Caches membership data (emails and full names) in-memory
+ * Caches membership data (emails, full names, and end dates) in-memory
  * and refreshes on startup.
  * Falls back to empty cache when Supabase is not available.
  */
@@ -11,6 +11,8 @@ class MemberCache {
     private emails = new Set<string>();
     /** Map from lowercase email to full name */
     private nameMap = new Map<string, string>();
+    /** Map from lowercase email to end date */
+    private endDateMap = new Map<string, string>();
     /** Timestamp of the last successful refresh (ms since epoch) */
     private lastRefresh = 0;
 
@@ -48,6 +50,7 @@ class MemberCache {
             );
             this.emails.clear();
             this.nameMap.clear();
+            this.endDateMap.clear();
             this.lastRefresh = now;
             return;
         }
@@ -60,21 +63,24 @@ class MemberCache {
             );
             this.emails.clear();
             this.nameMap.clear();
+            this.endDateMap.clear();
             this.lastRefresh = now;
             return;
         }
 
-        const { data: members, error } = await supabase.from("member_list").select("full_name, email");
+        const { data: members, error } = await supabase.from("member_list").select("full_name, email, end_date");
 
         if (error) throw error;
 
         // Clear and rebuild caches
         this.emails.clear();
         this.nameMap.clear();
+        this.endDateMap.clear();
         for (const member of members) {
             const emailLower = member.email.trim().toLowerCase();
             this.emails.add(emailLower);
             this.nameMap.set(emailLower, member.full_name);
+            this.endDateMap.set(emailLower, member.end_date);
         }
 
         this.lastRefresh = now;
@@ -97,6 +103,15 @@ class MemberCache {
      */
     public getFullName(email: string): string | undefined {
         return this.nameMap.get(email.trim().toLowerCase());
+    }
+
+    /**
+     * Gets the end date associated with an email.
+     * @param {string} email - The email to look up (case-insensitive).
+     * @returns {string | undefined} The end date or undefined if not found.
+     */
+    public getEndDate(email: string): string | undefined {
+        return this.endDateMap.get(email.trim().toLowerCase());
     }
 
     /**

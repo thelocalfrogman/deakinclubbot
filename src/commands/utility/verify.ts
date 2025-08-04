@@ -107,6 +107,11 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
             logger("[/verify] Could not retrieve full name", "error", username);
             return safeReply(interaction, createErrorEmbed());
         }
+        const endDate = memberCache.getEndDate(email);
+        if (!endDate) {
+            logger("[/verify] Could not retrieve end date", "error", username);
+            return safeReply(interaction, createErrorEmbed());
+        }
 
         // — Role Assignment & Database Upsert —
         try {
@@ -121,6 +126,7 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
             discord_id: userId,
             email,
             full_name: fullName,
+            end_date: endDate,
             discord_username: username,
             verified_at: new Date().toISOString(),
         });

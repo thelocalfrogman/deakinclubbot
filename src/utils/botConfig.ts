@@ -25,8 +25,7 @@ export interface BotConfig {
     botName: string;
     botColor: string;
     
-    // Welcome messages
-    welcomeMessage: string;
+    // Verification messages
     verificationMessage: string;
     
     // Command descriptions (customizable)
@@ -52,7 +51,7 @@ export interface BotConfig {
         calendar: string;
     };
     
-    // Command output customization
+    // Command output customizations
     commandOutputs: {
         commands: {
             entertainmentTitle: string;
@@ -104,14 +103,13 @@ const defaultConfig: BotConfig = {
     footerText: "Discord Bot Generator",
     botName: "Discord Bot",
     botColor: "#00aeef",
-    welcomeMessage: "Welcome to our community!",
     verificationMessage: "You have been successfully verified!",
     commandDescriptions: {
         whoami: "Display bot information",
         ping: "Display latency and response time",
         commands: "Display a list of all available commands",
         eightball: "Ask the magic 8-ball a question",
-        cat: "Display a random cat HTTP status code",
+        cat: "Display a random cat image",
         flip: "Flip a virtual coin!",
         verify: "Verify your membership and redeem the @Member role",
         calendar: "Display a list of upcoming events"
