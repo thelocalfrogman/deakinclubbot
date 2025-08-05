@@ -162,6 +162,8 @@ export class MembershipScheduler {
 
             const { MEMBER_ROLE_ID, GUILD_ID } = config;
 
+            logger(`[MembershipScheduler] Config - GUILD_ID: "${GUILD_ID}", MEMBER_ROLE_ID: "${MEMBER_ROLE_ID}"`, "info");
+
             // Get guild and role objects
             const guild = this.client.guilds.cache.get(GUILD_ID);
             if (!guild) {
@@ -169,11 +171,29 @@ export class MembershipScheduler {
                 return;
             }
 
-            const role = guild.roles.cache.get(MEMBER_ROLE_ID);
+            logger(`[MembershipScheduler] Guild found: "${guild.name}" (ID: ${guild.id})`, "info");
+
+            // Try to fetch the role from cache first, then from API
+            let role = guild.roles.cache.get(MEMBER_ROLE_ID);
+            
             if (!role) {
-                logger("[MembershipScheduler] Member role not found, cannot remove roles", "error");
+                logger(`[MembershipScheduler] Role not in cache, attempting to fetch from API...`, "info");
+                try {
+                    const fetchedRole = await guild.roles.fetch(MEMBER_ROLE_ID);
+                    role = fetchedRole || undefined;
+                } catch (fetchError) {
+                    logger(`[MembershipScheduler] Failed to fetch role from API: ${String(fetchError)}`, "error");
+                }
+            }
+
+            if (!role) {
+                // Log all available roles to help debug
+                const availableRoles = guild.roles.cache.map(r => `"${r.name}" (${r.id})`).join(', ');
+                logger(`[MembershipScheduler] Member role not found. Available roles: ${availableRoles}`, "error");
                 return;
             }
+
+            logger(`[MembershipScheduler] Role found: "${role.name}" (ID: ${role.id})`, "info");
 
             // Get today's date for comparison
             const today = getTodayInDDMMYY();

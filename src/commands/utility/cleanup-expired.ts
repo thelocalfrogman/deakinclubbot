@@ -30,6 +30,8 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
 
         const { MEMBER_ROLE_ID, GUILD_ID } = config;
 
+        logger(`[/cleanup-expired] Config - GUILD_ID: "${GUILD_ID}", MEMBER_ROLE_ID: "${MEMBER_ROLE_ID}"`, "info", username);
+
         // Get guild and role objects
         const guild = client.guilds.cache.get(GUILD_ID);
         if (!guild) {
@@ -37,11 +39,29 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
             return safeReply(interaction, createErrorEmbed("Guild not found"));
         }
 
-        const role = guild.roles.cache.get(MEMBER_ROLE_ID);
+        logger(`[/cleanup-expired] Guild found: "${guild.name}" (ID: ${guild.id})`, "info", username);
+
+        // Try to fetch the role from cache first, then from API
+        let role = guild.roles.cache.get(MEMBER_ROLE_ID);
+        
         if (!role) {
-            logger("[/cleanup-expired] Member role not found", "error", username);
-            return safeReply(interaction, createErrorEmbed("Member role not found"));
+            logger(`[/cleanup-expired] Role not in cache, attempting to fetch from API...`, "info", username);
+            try {
+                const fetchedRole = await guild.roles.fetch(MEMBER_ROLE_ID);
+                role = fetchedRole || undefined;
+            } catch (fetchError) {
+                logger(`[/cleanup-expired] Failed to fetch role from API: ${String(fetchError)}`, "error", username);
+            }
         }
+
+        if (!role) {
+            // Log all available roles to help debug
+            const availableRoles = guild.roles.cache.map(r => `"${r.name}" (${r.id})`).join(', ');
+            logger(`[/cleanup-expired] Member role not found. Available roles: ${availableRoles}`, "error", username);
+            return safeReply(interaction, createErrorEmbed(`Member role not found. Role ID: ${MEMBER_ROLE_ID}\n\nCheck that the role exists and the bot has permission to see it.`));
+        }
+
+        logger(`[/cleanup-expired] Role found: "${role.name}" (ID: ${role.id})`, "info", username);
 
         // Get today's date for comparison
         const today = getTodayInDDMMYY();

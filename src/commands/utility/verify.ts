@@ -45,6 +45,7 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
         // Debug logging for discord_id
         logger(`[/verify] Processing verification - Discord ID: "${userId}", Username: "${username}", Email: "${email}"`, "info", username);
         logger(`[/verify] userId type: ${typeof userId}, value: "${userId}", length: ${userId.length}`, "info", username);
+        logger(`[/verify] Config - GUILD_ID: "${GUILD_ID}", MEMBER_ROLE_ID: "${MEMBER_ROLE_ID}"`, "info", username);
 
         // — Supabase Check —
         if (!isSupabaseAvailable()) {
@@ -58,11 +59,17 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
             return safeReply(interaction, await createErrorEmbed());
         }
 
+        logger(`[/verify] Guild found: "${guild.name}" (ID: ${guild.id})`, "info", username);
+
         const role = guild.roles.cache.get(MEMBER_ROLE_ID);
         if (!role) {
-            logger("[/verify] Invalid role", "error", username);
+            // Log all available roles to help debug
+            const availableRoles = guild.roles.cache.map(r => `"${r.name}" (${r.id})`).join(', ');
+            logger(`[/verify] Invalid role. Available roles: ${availableRoles}`, "error", username);
             return safeReply(interaction, await createErrorEmbed());
         }
+
+        logger(`[/verify] Role found: "${role.name}" (ID: ${role.id})`, "info", username);
 
         // Fetch member to inspect and modify roles
         const member = await guild.members.fetch(userId);
