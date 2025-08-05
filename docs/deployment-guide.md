@@ -97,8 +97,9 @@ heroku config:set SUPABASE_ANON_KEY=your_supabase_key
 ### Why Use Supabase?
 
 If you want these advanced features, you'll need Supabase:
+
 - ✅ Member verification system (`/verify` command)
-- ✅ Event calendar (`/calendar` command)  
+- ✅ Event calendar (`/calendar` command)
 - ✅ Automatic membership expiration notifications
 - ✅ Admin tools for member management
 
@@ -167,7 +168,7 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         vm.discord_id::text,
         vm.discord_username,
         vm.full_name,
@@ -241,6 +242,7 @@ Before deploying, make sure you have:
 ## 🎯 Bot Features After Deployment
 
 ### Core Commands (Always Available)
+
 - `/whoami` - Customized bot information with your branding
 - `/ping` - Bot latency check
 - `/commands` - Organized command help
@@ -249,11 +251,13 @@ Before deploying, make sure you have:
 - `/flip` - Coin flip game
 
 ### Advanced Commands (Require Supabase)
+
 - `/verify` - Member verification with role assignment
 - `/calendar` - Event calendar with filtering
 - `/check-expiring` - Admin tool for membership management
 
 ### Automated Features
+
 - **Membership Expiration**: Automatic DM notifications to expiring members
 - **Role Management**: Automatic role assignment and restoration
 - **Activity Status**: Custom bot presence reflecting your organization
@@ -291,12 +295,12 @@ Before deploying, make sure you have:
 
 ## 💰 Cost Comparison
 
-| Service      | Free Tier | Monthly Cost | Features | Ease of Use |
-| ------------ | --------- | ------------ | -------- | ----------- |
-| Railway      | 500 hrs    | $5+ after limit | Auto-deploy, scaling | ⭐⭐⭐⭐⭐ |
-| Heroku       | 550 hrs    | $7+/month | Add-ons, simple deploy | ⭐⭐⭐⭐ |
-| DigitalOcean | None       | $6+/month | Full control, VPS | ⭐⭐⭐ |
-| Supabase     | 50k users  | $25+/month after | Database, realtime | ⭐⭐⭐⭐ |
+| Service      | Free Tier | Monthly Cost     | Features               | Ease of Use |
+| ------------ | --------- | ---------------- | ---------------------- | ----------- |
+| Railway      | 500 hrs   | $5+ after limit  | Auto-deploy, scaling   | ⭐⭐⭐⭐⭐  |
+| Heroku       | 550 hrs   | $7+/month        | Add-ons, simple deploy | ⭐⭐⭐⭐    |
+| DigitalOcean | None      | $6+/month        | Full control, VPS      | ⭐⭐⭐      |
+| Supabase     | 50k users | $25+/month after | Database, realtime     | ⭐⭐⭐⭐    |
 
 **💡 Recommended Setup**: Railway (bot hosting) + Supabase (database) = ~$5-10/month total
 
@@ -313,18 +317,21 @@ Before deploying, make sure you have:
 ## 📊 Monitoring Your Bot
 
 ### Health Checks
+
 - Monitor bot uptime and response rates
 - Set up alerts for when bot goes offline
 - Check Discord server for bot status
 - Review cloud service metrics
 
-### Database Monitoring  
+### Database Monitoring
+
 - Monitor Supabase usage (rows, bandwidth)
 - Check for failed verification attempts
 - Review member growth and retention
 - Monitor event calendar usage
 
 ### Performance Optimization
+
 - Monitor command response times
 - Check memory and CPU usage
 - Optimize database queries if needed
@@ -348,7 +355,7 @@ Once deployed successfully, your bot will:
 
 - ✅ **Run 24/7** without your computer being on
 - ✅ **Auto-restart** if it crashes
-- ✅ **Scale automatically** with your community growth  
+- ✅ **Scale automatically** with your community growth
 - ✅ **Provide advanced features** like member verification
 - ✅ **Send automated notifications** for expiring memberships
 - ✅ **Maintain your branding** consistently across all interactions
@@ -358,6 +365,7 @@ Your Discord community now has a professional, fully-featured bot that reflects 
 ## 🔄 Ongoing Maintenance
 
 ### Regular Tasks
+
 - **Monitor bot health** and uptime
 - **Update member data** in Supabase as needed
 - **Add events** to calendar for upcoming activities
@@ -366,6 +374,7 @@ Your Discord community now has a professional, fully-featured bot that reflects 
 - **Update dependencies** periodically
 
 ### Community Growth
+
 - **Monitor verification** success rates
 - **Gather feedback** from members on bot features
 - **Adjust commands** and messages based on usage

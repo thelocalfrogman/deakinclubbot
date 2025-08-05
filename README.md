@@ -1,16 +1,16 @@
 # Deakin Discord Bot Generator
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.1.0-blue.svg?style=for-the-badge)
 ![NodeJS](https://img.shields.io/badge/NodeJS-v22%2B-%235FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white&logoSize=auto)
 ![Prettier](https://img.shields.io/badge/Prettier-%23F7B93E?style=for-the-badge&logo=prettier&logoColor=black&logoSize=auto)
 
-A **comprehensive Discord bot generator** designed to help student organizations, clubs, and communities create fully customized Discord bots without any coding knowledge. Features a complete web-based configuration system and professional-grade functionality.
+A **comprehensive Discord bot generator** designed to help student organisations, clubs, and communities create fully customized Discord bots without any coding knowledge. Features a complete web-based configuration system and professional-grade functionality.
 
 ## ✨ Features
 
 - 🤖 **9 Customizable Commands** - Complete suite of core, fun, and utility commands
-- 🎨 **Complete Visual Customization** - Colors, branding, messages, and bot activity
-- 📝 **No-Code Configuration** - Web interface for every aspect of customization
+- 🎨 **Complete Visual Customisation** - Colors, branding, messages, and bot activity
+- 📝 **No-Code Configuration** - Web interface for every aspect of customisation
 - 🔧 **Channel ID Management** - Easy Discord channel linking without code editing
 - 📊 **Member Verification System** - Optional Supabase integration for membership management
 - 📅 **Event Calendar** - Community event management with category filtering
@@ -22,21 +22,25 @@ A **comprehensive Discord bot generator** designed to help student organizations
 ## 🎮 Complete Command Suite
 
 ### Core Commands (Always Available)
+
 - `/whoami` - **Fully customizable** bot information with your branding and external links
 - `/ping` - Bot latency and response time checking
 - `/commands` - Organized help system showing all available commands
 
-### Fun Commands (Always Available)  
+### Fun Commands (Always Available)
+
 - `/8ball <question>` - Magic 8-ball with customizable responses
 - `/cat` - Random cat HTTP status code images for developer humor
 - `/flip` - Virtual coin flip with custom messaging
 
 ### Utility Commands (Require Supabase Setup)
+
 - `/verify <email>` - **Complete membership verification system** with role assignment
 - `/calendar [category]` - **Event calendar** with filtering (CTF, networking, etc.)
 - `/check-expiring` - **[ADMIN ONLY]** Membership expiration management tool
 
 ### Automated Features
+
 - 🔄 **Membership Expiration Notifications** - Automatic DM alerts to expiring members
 - 👤 **Role Management** - Automatic role assignment and restoration
 - 📱 **Custom Bot Presence** - Configurable activity status
@@ -68,11 +72,12 @@ A **comprehensive Discord bot generator** designed to help student organizations
     npm install
     ```
 
-3. **Configure via Web Interface**
-   ```bash
-   npm run web
-   # Visit http://localhost:3000 to configure your bot
-   ```
+3. **Configure via Web Interface OR use our hosted site**
+
+    ```bash
+    npm run web
+    # Visit http://localhost:3000 to configure your bot
+    ```
 
 4. **Set up environment variables**
    Download `.env` from web interface or create manually:
@@ -109,37 +114,39 @@ discord-bot-generator/
 ├── docs/                 # Complete documentation
 │   ├── index.html        # Web configuration interface
 │   ├── example.html      # DUCA example configuration
-│   ├── getting-started.md # Step-by-step setup guide
 │   ├── deployment-guide.md # Cloud deployment instructions
-│   └── generator-guide.md # Web interface documentation
 ├── data/                 # Bot configuration storage
 │   └── bot-config.json   # Generated configuration file
 ├── .env                  # Environment variables
 └── package.json          # Project dependencies
 ```
 
-## 🎛️ Complete Customization System
+## 🎛️ Complete Customisation System
 
 ### Using the Web Configuration Interface
 
 Our [Config Generator](https://duca-club.github.io/deakin-club-bot/) allows you to:
 
 **🎨 General Branding**
+
 - Custom bot name and organization name
 - Brand colors and visual theming
 - Custom bot activity status (Watching, Playing, etc.)
 
-**📝 Command Customization** 
+**📝 Command Customisation**
+
 - Personalized descriptions for all 9 commands
 - Custom command responses and error messages
 - Organization-specific terminology and tone
 
 **🔗 External Integration**
+
 - Social media buttons (Join, Socials, GitHub)
 - Channel linking without code editing
 - Custom verification messages and flows
 
 **📊 Advanced Features**
+
 - Member verification system configuration
 - Event calendar setup and categorization
 - Automated membership expiration handling
@@ -148,8 +155,9 @@ Our [Config Generator](https://duca-club.github.io/deakin-club-bot/) allows you 
 ### Manual Configuration
 
 All settings are stored in `data/bot-config.json` with comprehensive options for:
+
 - Bot appearance and branding
-- Command descriptions and responses  
+- Command descriptions and responses
 - Verification system messages
 - Channel configurations
 - Membership expiration notices
@@ -214,7 +222,7 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         vm.discord_id::text,
         vm.discord_username,
         vm.full_name,
@@ -230,6 +238,7 @@ $$ LANGUAGE plpgsql;
 ### Recommended: Railway + Supabase
 
 **Monthly Cost**: ~$5-10 total
+
 - ✅ Railway: Bot hosting with auto-scaling
 - ✅ Supabase: Database with 50k free users
 - ✅ One-click deployment from GitHub
@@ -238,66 +247,21 @@ $$ LANGUAGE plpgsql;
 ### Alternative Options
 
 - **Heroku**: Popular platform ($7+/month)
-- **DigitalOcean**: Full VPS control ($6+/month)  
+- **DigitalOcean**: Full VPS control ($6+/month)
 - **Self-hosted**: Use your own server
 
 **📚 Full deployment guides available in [docs/deployment-guide.md](docs/deployment-guide.md)**
 
 ## 🔧 Environment Variables
 
-| Variable            | Description                | Required | Purpose |
-| ------------------- | -------------------------- | -------- | ------- |
-| `DISCORD_TOKEN`     | Discord bot token          | ✅       | Bot authentication |
-| `GUILD_ID`          | Discord server ID          | ✅       | Server targeting |
-| `DEV_ROLE_ID`       | Admin role ID              | ✅       | Permission management |
-| `MEMBER_ROLE_ID`    | Verified member role ID    | ✅       | Verification system |
-| `SUPABASE_URL`      | Supabase project URL       | ❌       | Database connection |
-| `SUPABASE_ANON_KEY` | Supabase API key          | ❌       | Database authentication |
-
-## 🛠️ Development
-
-### Prerequisites
-
-- Node.js v22 or higher
-- npm or yarn package manager
-- Discord Developer Application
-- (Optional) Supabase account for advanced features
-
-### Development Workflow
-
-1. **Start Web Interface**: `npm run web`
-2. **Configure Bot**: Use browser interface at `http://localhost:3000`
-3. **Test Locally**: `npm run build && npm start`
-4. **Deploy**: Follow deployment guide
-
-### Adding New Commands
-
-1. Create file in `src/commands/[category]/newcommand.ts`
-2. Export `data` and `run` functions following existing patterns
-3. Add command description to web interface
-4. Update bot configuration schema if needed
-
-### Extending Configuration
-
-1. Add form fields to `docs/index.html`
-2. Update `getBotConfig()` in web interface
-3. Extend `BotConfig` interface in `src/utils/botConfig.ts`
-4. Handle new configuration in bot logic
-
-## 📚 Documentation
-
-- 📖 **[Getting Started Guide](docs/getting-started.md)** - Complete setup walkthrough
-- 🚀 **[Deployment Guide](docs/deployment-guide.md)** - Cloud hosting instructions
-- 🎛️ **[Generator Guide](docs/generator-guide.md)** - Web interface documentation
-- 💡 **[DUCA Example](docs/example.html)** - Real-world configuration example
-
-## 🎯 Perfect For
-
-- **Student Organizations** - University clubs and societies
-- **Gaming Communities** - Discord servers with member management needs
-- **Professional Groups** - Industry associations and networking groups
-- **Hobby Communities** - Special interest groups and clubs
-- **Non-Profits** - Organizations needing member verification
+| Variable            | Description             | Required | Purpose                 |
+| ------------------- | ----------------------- | -------- | ----------------------- |
+| `DISCORD_TOKEN`     | Discord bot token       | ✅       | Bot authentication      |
+| `GUILD_ID`          | Discord server ID       | ✅       | Server targeting        |
+| `DEV_ROLE_ID`       | Admin role ID           | ✅       | Permission management   |
+| `MEMBER_ROLE_ID`    | Verified member role ID | ✅       | Verification system     |
+| `SUPABASE_URL`      | Supabase project URL    | ❌       | Database connection     |
+| `SUPABASE_ANON_KEY` | Supabase API key        | ❌       | Database authentication |
 
 ## 🤝 Contributing
 
@@ -313,11 +277,11 @@ We welcome contributions! Please see our [Contributing Guidelines](https://amazi
 
 ## 🌟 What Makes This Special
 
-- **Zero-Code Customization** - Everything configurable via web interface
-- **Production Ready** - Used by real organizations like DUCA
+- **Zero-Code Customisation** - Everything configurable via web interface
+- **Production Ready** - Used by real organisations like DUCA
 - **Comprehensive** - Covers all aspects of Discord bot management
 - **Professional** - Branded, consistent experience across all interactions
-- **Scalable** - Grows with your community from small clubs to large organizations
+- **Scalable** - Grows with your community from small clubs to large organisations
 - **Modern** - Built with current best practices and technologies
 
 ## 🙏 Acknowledgments
@@ -330,9 +294,10 @@ We welcome contributions! Please see our [Contributing Guidelines](https://amazi
 
 ---
 
-**Need help?** 
-- 📖 Check our [documentation](docs/) 
-- 💬 Join the [DUCA Discord Server](https://discord.gg/4xNnxkSgUH)
+**Need help?**
+
+- 📖 Check our [documentation](docs/)
+- 💬 Join the [DUCA Discord Server](https://discord.gg/duca)
 - 🐛 Report issues on [GitHub](https://github.com/duca-club/deakin-club-bot/issues)
 
 **Ready to create your community's perfect Discord bot?** Start with our [Config Generator](https://duca-club.github.io/deakin-club-bot/) today!

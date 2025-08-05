@@ -39,6 +39,12 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
 
         // Get today's date in DD/MM/YY format to match database format
         const today = getTodayInDDMMYY();
+        const serverTime = new Date().toLocaleString("en-SG", { timeZone: "Asia/Singapore" });
+        const melbourneTime = new Date().toLocaleString("en-AU", { timeZone: "Australia/Melbourne" });
+        
+        logger(`[/check-expiring] Server time (Singapore): ${serverTime}`, "info", username);
+        logger(`[/check-expiring] Melbourne time: ${melbourneTime}`, "info", username);
+        logger(`[/check-expiring] Checking for memberships expiring on: ${today}`, "info", username);
 
         // Query verified_members for users whose membership expires today
         // Use RPC function to get discord_id as text to prevent precision loss

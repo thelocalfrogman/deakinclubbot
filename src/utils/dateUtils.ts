@@ -64,14 +64,28 @@ export function formatToDDMMYY(date: Date): string {
 
 /**
  * Gets today's date in DD/MM/YY format for database comparison.
+ * Uses Australia/Melbourne timezone to match the cron scheduler.
  * @returns Today's date in DD/MM/YY format
  */
 export function getTodayInDDMMYY(): string {
-    return formatToDDMMYY(new Date());
+    // Get current date in Australia/Melbourne timezone to match cron scheduler
+    const melbourneDate = new Date().toLocaleString("en-AU", {
+        timeZone: "Australia/Melbourne",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    });
+    
+    // Parse the Melbourne date string (DD/MM/YYYY format)
+    const [day, month, year] = melbourneDate.split('/');
+    const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    
+    return formatToDDMMYY(dateObj);
 }
 
 /**
  * Checks if a date string in DD/MM/YY format represents today's date.
+ * Uses Australia/Melbourne timezone to match the cron scheduler.
  * @param dateString - Date in DD/MM/YY format
  * @returns True if the date is today
  */
@@ -81,10 +95,20 @@ export function isToday(dateString: string): boolean {
         return false;
     }
     
-    const today = new Date();
-    return inputDate.getFullYear() === today.getFullYear() &&
-           inputDate.getMonth() === today.getMonth() &&
-           inputDate.getDate() === today.getDate();
+    // Get current date in Australia/Melbourne timezone
+    const melbourneDate = new Date().toLocaleString("en-AU", {
+        timeZone: "Australia/Melbourne",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    });
+    
+    const [day, month, year] = melbourneDate.split('/');
+    const todayMelbourne = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    
+    return inputDate.getFullYear() === todayMelbourne.getFullYear() &&
+           inputDate.getMonth() === todayMelbourne.getMonth() &&
+           inputDate.getDate() === todayMelbourne.getDate();
 }
 
 /**
