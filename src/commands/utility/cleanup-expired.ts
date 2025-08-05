@@ -48,9 +48,33 @@ export async function run({ interaction, client }: SlashCommandProps): Promise<v
             logger(`[/cleanup-expired] Role not in cache, attempting to fetch from API...`, "info", username);
             try {
                 const fetchedRole = await guild.roles.fetch(MEMBER_ROLE_ID);
-                role = fetchedRole || undefined;
+                if (fetchedRole) {
+                    logger(`[/cleanup-expired] Successfully fetched role from API: "${fetchedRole.name}" (${fetchedRole.id})`, "info", username);
+                    role = fetchedRole;
+                } else {
+                    logger(`[/cleanup-expired] API returned null for role ID: ${MEMBER_ROLE_ID}`, "error", username);
+                }
             } catch (fetchError) {
                 logger(`[/cleanup-expired] Failed to fetch role from API: ${String(fetchError)}`, "error", username);
+                
+                // Try to fetch all roles to see if we have permission issues
+                try {
+                    logger(`[/cleanup-expired] Attempting to fetch all roles to check permissions...`, "info", username);
+                    await guild.roles.fetch();
+                    const allRoles = guild.roles.cache.map(r => `"${r.name}" (${r.id})`).join(', ');
+                    logger(`[/cleanup-expired] After full fetch, available roles: ${allRoles}`, "info", username);
+                    
+                    // Try one more time to get the specific role after full fetch
+                    const roleAfterFetch = guild.roles.cache.get(MEMBER_ROLE_ID);
+                    if (roleAfterFetch) {
+                        logger(`[/cleanup-expired] Found role after full fetch: "${roleAfterFetch.name}" (${roleAfterFetch.id})`, "info", username);
+                        role = roleAfterFetch;
+                    } else {
+                        logger(`[/cleanup-expired] Role ${MEMBER_ROLE_ID} still not found after full fetch`, "error", username);
+                    }
+                } catch (fullFetchError) {
+                    logger(`[/cleanup-expired] Failed to fetch all roles: ${String(fullFetchError)}`, "error", username);
+                }
             }
         }
 
